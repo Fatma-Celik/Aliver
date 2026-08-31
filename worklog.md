@@ -92,3 +92,23 @@ Work Log:
 Stage Summary:
 - Kayıt → Giriş → Aile Oluşturma → Liste Oluşturma → Ürün Ekleme → Tamamlama akışı başarıyla çalışıyor
 - Bottom navigation çalışıyor (JS click ile test edildi)
+
+---
+Task ID: 3 (Glass Effects)
+Agent: UI Polish Agent
+Task: Apply glass effects and improved hover styling to all ALIVER components
+
+Work Log:
+- bottom-nav.tsx: Replaced inline style prop (background, backdropFilter, WebkitBackdropFilter, borderTop, paddingBottom) with `glass-nav relative` class
+- auth-screen.tsx: Card → `glass-card`, ALIVER heading → `text-glow-gold`, 3x Input → added `glass-input`, submit Button → added `hover-shine`, CardFooter → added `hover-glow`
+- home-screen.tsx: 2x `dark-card` → `glass-card`, 2x `dark-card-elevated` → `glass-card hover-glow` (clickable), 2x stat cards → `glass-card hover-border-glow`, empty state → `glass-card`
+- family-screen.tsx: 2x create/join cards → `glass-card hover-glow`, QR section → `glass-card`, member rows → `glass-card hover-border-glow`, 2x Input → `glass-input`, Oluştur button → `hover-shine`, Katıl button → `hover-shine`
+- list-screen.tsx: 3x `dark-card` → `glass-card`, 1x `dark-card-elevated` → `glass-card hover-glow` (clickable list), 1x `dark-card-elevated` → `glass-card` (add item section), item rows → `glass-card hover-border-glow`, 3x Input → `glass-input`, Ekle button → `hover-shine`
+- profile-screen.tsx: settings card → `glass-card`, 3x StatCard → `glass-card hover-border-glow`
+
+Stage Summary:
+- All `dark-card` → `glass-card`, `dark-card-elevated` → `glass-card` (with `hover-glow` or `hover-border-glow` as appropriate)
+- All Input components received `glass-input` class
+- Primary gold buttons received `hover-shine` class
+- No functionality/logic changes — CSS class updates only
+- ESLint passes cleanly

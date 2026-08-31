@@ -109,14 +109,14 @@ export default function AuthScreen() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative z-10 w-full max-w-md"
       >
-        <Card className="border-[#14213D]/60 bg-[#14213D] shadow-2xl">
+        <Card className="glass-card shadow-2xl">
           {/* Header – Logo / Title */}
           <CardHeader className="flex flex-col items-center gap-2 pb-2 pt-2">
             <motion.h1
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="bg-gradient-to-r from-[#FCA311] to-[#e8960f] bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl"
+              className="bg-gradient-to-r from-[#FCA311] to-[#e8960f] bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl text-glow-gold"
             >
               ALIVER
             </motion.h1>
@@ -168,7 +168,7 @@ export default function AuthScreen() {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           autoComplete="name"
-                          className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+                          className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
                         />
                       </div>
                     </motion.div>
@@ -190,7 +190,7 @@ export default function AuthScreen() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+                    className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
                   />
                 </div>
 
@@ -214,7 +214,7 @@ export default function AuthScreen() {
                           ? 'new-password'
                           : 'current-password'
                       }
-                      className="h-11 border-[#FCA311]/20 bg-black/40 pr-11 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+                      className="h-11 border-[#FCA311]/20 bg-black/40 pr-11 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
                     />
                     <button
                       type="button"
@@ -252,7 +252,7 @@ export default function AuthScreen() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="h-11 w-full rounded-full bg-gradient-to-r from-[#FCA311] to-[#e8960f] text-sm font-semibold text-black shadow-lg shadow-[#FCA311]/20 transition-all hover:from-[#f5b533] hover:to-[#FCA311] hover:shadow-[#FCA311]/30 disabled:opacity-70"
+                  className="h-11 w-full rounded-full bg-gradient-to-r from-[#FCA311] to-[#e8960f] text-sm font-semibold text-black shadow-lg shadow-[#FCA311]/20 transition-all hover:from-[#f5b533] hover:to-[#FCA311] hover:shadow-[#FCA311]/30 disabled:opacity-70 hover-shine"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -270,7 +270,7 @@ export default function AuthScreen() {
           </CardContent>
 
           {/* Footer – toggle mode */}
-          <CardFooter className="justify-center pb-6 pt-0">
+          <CardFooter className="justify-center pb-6 pt-0 hover-glow rounded-b-2xl">
             <p className="text-sm text-white/50">
               {mode === 'login'
                 ? 'Hesabınız yok mu?'

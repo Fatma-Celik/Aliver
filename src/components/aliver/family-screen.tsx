@@ -289,7 +289,7 @@ export default function FamilyScreen() {
             <motion.div
               variants={itemVariants}
               whileHover={{ scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-              className="dark-card-elevated flex flex-col gap-4 rounded-2xl p-5"
+              className="glass-card hover-glow flex flex-col gap-4 rounded-2xl p-5"
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
@@ -308,14 +308,14 @@ export default function FamilyScreen() {
                   value={createName}
                   onChange={(e) => setCreateName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:ring-[#FCA311]/40"
+                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:ring-[#FCA311]/40 glass-input"
                 />
               </div>
 
               <Button
                 onClick={handleCreate}
                 disabled={actionLoading || !createName.trim()}
-                className="w-full rounded-full font-semibold text-black"
+                className="w-full rounded-full font-semibold text-black hover-shine"
                 style={{
                   background: 'linear-gradient(135deg, #FCA311 0%, #E8920A 50%, #D48000 100%)',
                   boxShadow: '0 4px 16px rgba(252, 163, 17, 0.2)',
@@ -334,7 +334,7 @@ export default function FamilyScreen() {
             <motion.div
               variants={itemVariants}
               whileHover={{ scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
-              className="dark-card-elevated flex flex-col gap-4 rounded-2xl p-5"
+              className="glass-card hover-glow flex flex-col gap-4 rounded-2xl p-5"
             >
               <div className="flex items-center gap-3">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
@@ -353,14 +353,14 @@ export default function FamilyScreen() {
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
-                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 font-mono uppercase tracking-widest text-white placeholder:text-white/30 placeholder:normal-case placeholder:tracking-normal focus-visible:ring-[#FCA311]/40"
+                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 font-mono uppercase tracking-widest text-white placeholder:text-white/30 placeholder:normal-case placeholder:tracking-normal focus-visible:ring-[#FCA311]/40 glass-input"
                 />
               </div>
 
               <Button
                 onClick={handleJoin}
                 disabled={actionLoading || !joinCode.trim()}
-                className="w-full rounded-full bg-[#14213D] font-semibold text-[#FCA311] hover:bg-[#14213D]/80"
+                className="w-full rounded-full bg-[#14213D] font-semibold text-[#FCA311] hover:bg-[#14213D]/80 hover-shine"
               >
                 {actionLoading ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -417,7 +417,7 @@ export default function FamilyScreen() {
           {/* ─── QR Code Section ─── */}
           <motion.section
             variants={itemVariants}
-            className="dark-card-elevated flex flex-col items-center gap-4 rounded-2xl p-6"
+            className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6"
           >
             <div className="flex items-center gap-2 text-sm font-semibold text-white/70">
               <QrCode className="size-4 text-[#FCA311]" />
@@ -481,7 +481,7 @@ export default function FamilyScreen() {
                       delay: 0.15 + index * 0.06,
                       ease: 'easeOut',
                     }}
-                    className="dark-card flex items-center gap-3 rounded-xl px-4 py-3"
+                    className="glass-card hover-border-glow flex items-center gap-3 rounded-xl px-4 py-3"
                   >
                     {/* Avatar - first letter circle in gold */}
                     <div

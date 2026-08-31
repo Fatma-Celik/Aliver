@@ -151,7 +151,7 @@ export default function ProfileScreen() {
       </motion.div>
 
       {/* ---- Settings List ---- */}
-      <motion.div variants={item} className="dark-card rounded-2xl divide-y divide-white/5">
+      <motion.div variants={item} className="glass-card rounded-2xl divide-y divide-white/5">
         {/* Notifications */}
         <div className="flex items-center justify-between px-4 py-3.5">
           <div className="flex items-center gap-3">
@@ -216,7 +216,7 @@ export default function ProfileScreen() {
 
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
-    <div className="dark-card rounded-2xl p-4 flex flex-col items-center gap-2 text-center">
+    <div className="glass-card hover-border-glow rounded-2xl p-4 flex flex-col items-center gap-2 text-center">
       <div className="text-[#FCA311]">{icon}</div>
       <span className="text-2xl font-bold text-white tabular-nums">{value}</span>
       <span className="text-[11px] text-white/40 leading-tight">{label}</span>

@@ -6,7 +6,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-outfit);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -44,7 +44,7 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.875rem;
   /* ALIVER Dark Platinum Theme */
   --background: #000000;
   --foreground: #FFFFFF;
@@ -77,30 +77,38 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.01em;
   }
 }
 
-/* Custom scrollbar for dark theme */
+/* ============================================================ */
+/*  CUSTOM SCROLLBAR                                             */
+/* ============================================================ */
+
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(252, 163, 17, 0.3);
+  background: rgba(252, 163, 17, 0.25);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(252, 163, 17, 0.5);
 }
 
-/* Platinum glow effects */
+/* ============================================================ */
+/*  PLATINI GOLD EFFECTS                                        */
+/* ============================================================ */
+
 .platini-glow {
-  box-shadow: 0 0 20px rgba(252, 163, 17, 0.15), 0 0 60px rgba(252, 163, 17, 0.05);
+  box-shadow: 0 0 20px rgba(252, 163, 17, 0.15),
+              0 0 60px rgba(252, 163, 17, 0.05);
 }
 
 .platini-glow-sm {
@@ -108,39 +116,243 @@
 }
 
 .platini-gradient {
-  background: linear-gradient(135deg, #FCA311 0%, #E8920A 50%, #D48000 100%);
+  background: linear-gradient(135deg, #FCA311 0%, #FFB938 40%, #E8920A 100%);
 }
 
 .platini-text-gradient {
-  background: linear-gradient(135deg, #FCA311 0%, #FFD60A 50%, #FCA311 100%);
+  background: linear-gradient(135deg, #FFD60A 0%, #FCA311 40%, #E8920A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* ============================================================ */
+/*  GLASS MORPHISM CARDS                                         */
+/* ============================================================ */
+
 .dark-card {
-  background: linear-gradient(145deg, #14213D 0%, #0D1B2A 100%);
+  background: linear-gradient(
+    145deg,
+    rgba(20, 33, 61, 0.7) 0%,
+    rgba(13, 27, 42, 0.8) 100%
+  );
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dark-card-elevated {
-  background: linear-gradient(145deg, #1B2838 0%, #14213D 100%);
-  border: 1px solid rgba(252, 163, 17, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(
+    145deg,
+    rgba(27, 40, 56, 0.65) 0%,
+    rgba(20, 33, 61, 0.75) 100%
+  );
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(252, 163, 17, 0.08);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Smooth transitions */
+/* Glass card with shimmer on hover */
+.glass-card {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 33, 61, 0.5) 0%,
+    rgba(13, 27, 42, 0.6) 100%
+  );
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(252, 163, 17, 0.03) 45%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(252, 163, 17, 0.03) 55%,
+    transparent 60%
+  );
+  transform: skewX(-15deg);
+  transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glass-card:hover::before {
+  left: 125%;
+}
+
+.glass-card:hover {
+  border-color: rgba(252, 163, 17, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(252, 163, 17, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  filter: brightness(1.05);
+}
+
+/* ============================================================ */
+/*  HOVER GLOW EFFECTS                                          */
+/* ============================================================ */
+
+.hover-glow {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hover-glow:hover {
+  box-shadow:
+    0 0 15px rgba(252, 163, 17, 0.12),
+    0 0 40px rgba(252, 163, 17, 0.04),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(252, 163, 17, 0.2);
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.hover-glow:active {
+  transform: translateY(0px);
+  filter: brightness(0.98);
+}
+
+/* Shine sweep on hover for buttons */
+.hover-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 48%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 52%,
+    transparent 60%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+.hover-shine:hover::after {
+  left: 120%;
+}
+
+/* Gold border glow on hover */
+.hover-border-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-border-glow:hover {
+  border-color: rgba(252, 163, 17, 0.25);
+  box-shadow:
+    0 0 12px rgba(252, 163, 17, 0.08),
+    inset 0 0 12px rgba(252, 163, 17, 0.03);
+}
+
+/* ============================================================ */
+/*  TEXT EFFECTS                                                */
+/* ============================================================ */
+
+.text-glow-gold {
+  text-shadow:
+    0 0 10px rgba(252, 163, 17, 0.4),
+    0 0 30px rgba(252, 163, 17, 0.15);
+}
+
+.text-glow-white {
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================================ */
+/*  GLASS INPUT STYLES                                           */
+/* ============================================================ */
+
+.glass-input {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
+}
+
+.glass-input:focus {
+  border-color: rgba(252, 163, 17, 0.35);
+  box-shadow:
+    0 0 0 3px rgba(252, 163, 17, 0.08),
+    0 0 16px rgba(252, 163, 17, 0.06);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.glass-input:hover:not(:focus) {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================================ */
+/*  GLASS NAVIGATION BAR                                        */
+/* ============================================================ */
+
+.glass-nav {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(32px) saturate(1.8);
+  -webkit-backdrop-filter: blur(32px) saturate(1.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.glass-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(252, 163, 17, 0.15) 50%,
+    transparent 100%
+  );
+}
+
+/* ============================================================ */
+/*  SMOOTH TRANSITIONS                                          */
+/* ============================================================ */
+
 * {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
 
-/* Input autofill fix for dark theme */
+/* ============================================================ */
+/*  INPUT AUTOFILL FIX                                          */
+/* ============================================================ */
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: #FFFFFF;
-  -webkit-box-shadow: 0 0 0px 1000px #1B2838 inset;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(13, 27, 42, 0.95) inset;
   transition: background-color 5000s ease-in-out 0s;
 }

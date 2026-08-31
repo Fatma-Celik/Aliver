@@ -211,7 +211,7 @@ function ListSelectionView() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="dark-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-16"
+            className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-16"
           >
             <div className="flex size-16 items-center justify-center rounded-full bg-white/5">
               <ShoppingCart className="size-8 text-white/20" />
@@ -240,7 +240,7 @@ function ListSelectionView() {
                   whileHover={cardHover}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleOpenList(list)}
-                  className="dark-card-elevated cursor-pointer rounded-2xl p-4"
+                  className="glass-card hover-glow cursor-pointer rounded-2xl p-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
@@ -311,7 +311,7 @@ function ListSelectionView() {
               onChange={(e) => setNewListName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
               placeholder="Örn: Haftalık market alışverişi"
-              className="border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+              className="border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
               autoFocus
             />
           </div>
@@ -539,7 +539,7 @@ function ItemsView() {
         {/* ─── Summary Bar ─── */}
         <motion.section
           variants={itemVariants}
-          className="dark-card rounded-2xl p-4"
+          className="glass-card rounded-2xl p-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -611,7 +611,7 @@ function ItemsView() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="dark-card-elevated flex flex-col gap-3 rounded-2xl p-4"
+              className="glass-card flex flex-col gap-3 rounded-2xl p-4"
             >
               <Input
                 ref={inputRef}
@@ -619,7 +619,7 @@ function ItemsView() {
                 onChange={(e) => setItemName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
                 placeholder="Ürün adı"
-                className="border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+                className="border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
               />
               <div className="flex gap-2">
                 <Input
@@ -629,7 +629,7 @@ function ItemsView() {
                   placeholder="1"
                   type="number"
                   min={1}
-                  className="w-20 shrink-0 border-[#FCA311]/20 bg-black/40 text-center text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30"
+                  className="w-20 shrink-0 border-[#FCA311]/20 bg-black/40 text-center text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
                 />
                 <Select value={itemUnit} onValueChange={setItemUnit}>
                   <SelectTrigger
@@ -666,7 +666,7 @@ function ItemsView() {
                 <Button
                   onClick={handleAddItem}
                   disabled={!itemName.trim() || adding}
-                  className="flex-1 rounded-full bg-[#FCA311] text-black hover:bg-[#FCA311]/90"
+                  className="flex-1 rounded-full bg-[#FCA311] text-black hover:bg-[#FCA311]/90 hover-shine"
                 >
                   {adding && <Loader2 className="mr-2 size-4 animate-spin" />}
                   <Plus className="mr-1 size-4" />
@@ -685,7 +685,7 @@ function ItemsView() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.15 }}
-            className="dark-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
+            className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
           >
             <div className="flex size-14 items-center justify-center rounded-full bg-white/5">
               <Package className="size-7 text-white/20" />
@@ -717,7 +717,7 @@ function ItemsView() {
                   layout
                   className={`group relative rounded-2xl ${item.completed ? 'opacity-50' : ''}`}
                 >
-                  <div className="dark-card flex items-center gap-3 rounded-2xl px-4 py-3">
+                  <div className="glass-card hover-border-glow flex items-center gap-3 rounded-2xl px-4 py-3">
                     {/* Checkbox */}
                     <motion.div
                       whileTap={{ scale: 0.85 }}

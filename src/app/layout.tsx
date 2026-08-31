@@ -1,18 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
-const inter = Inter({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin", "latin-ext"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "ALIVER - Aile Alışveriş Asistanınız",
   description: "Ailenizle paylaşabileceğiniz akıllı alışveriş listesi uygulaması",
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>",
+    icon: "/aliver-logo.png",
   },
 };
 
@@ -32,16 +40,19 @@ export default function RootLayout({
   return (
     <html lang="tr" suppressHydrationWarning>
       <body
-        className={`${inter.variable} antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${outfit.variable} ${mono.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
         {children}
         <Toaster
           position="top-center"
           toastOptions={{
             style: {
-              background: '#14213D',
-              border: '1px solid rgba(252, 163, 17, 0.2)',
+              background: 'rgba(20, 33, 61, 0.9)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(252, 163, 17, 0.15)',
               color: '#FFFFFF',
+              fontFamily: 'Outfit, system-ui, sans-serif',
             },
           }}
         />

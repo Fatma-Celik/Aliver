@@ -239,7 +239,7 @@ export default function HomeScreen() {
             <motion.section variants={itemVariants}>
               <motion.div
                 whileHover={cardHover}
-                className="dark-card-elevated flex cursor-pointer items-center gap-4 rounded-2xl p-4"
+                className="glass-card hover-glow flex cursor-pointer items-center gap-4 rounded-2xl p-4"
                 onClick={handleCreateFamily}
               >
                 <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
@@ -264,7 +264,7 @@ export default function HomeScreen() {
             >
               <motion.div
                 whileHover={cardHover}
-                className="dark-card flex flex-col items-center gap-2 rounded-2xl p-4"
+                className="glass-card hover-border-glow flex flex-col items-center gap-2 rounded-2xl p-4"
               >
                 <div className="flex size-9 items-center justify-center rounded-lg bg-[#FCA311]/15">
                   <ShoppingCart className="size-4 text-[#FCA311]" />
@@ -275,7 +275,7 @@ export default function HomeScreen() {
 
               <motion.div
                 whileHover={cardHover}
-                className="dark-card flex flex-col items-center gap-2 rounded-2xl p-4"
+                className="glass-card hover-border-glow flex flex-col items-center gap-2 rounded-2xl p-4"
               >
                 <div className="flex size-9 items-center justify-center rounded-lg bg-[#FCA311]/15">
                   <TrendingUp className="size-4 text-[#FCA311]" />
@@ -310,7 +310,7 @@ export default function HomeScreen() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="dark-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
+                className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
               >
                 <div className="flex size-14 items-center justify-center rounded-full bg-white/5">
                   <ShoppingCart className="size-7 text-white/20" />
@@ -339,7 +339,7 @@ export default function HomeScreen() {
                       whileHover={cardHover}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleListClick(list)}
-                      className="dark-card-elevated flex w-[200px] shrink-0 cursor-pointer flex-col gap-3 rounded-2xl p-4"
+                      className="glass-card hover-glow flex w-[200px] shrink-0 cursor-pointer flex-col gap-3 rounded-2xl p-4"
                       style={{ transitionDelay: `${index * 50}ms` }}
                     >
                       {/* List name */}
