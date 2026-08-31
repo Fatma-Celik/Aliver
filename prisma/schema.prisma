@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  families FamilyMember[]
+  items    ShoppingItem[]
+  purchasedItems ShoppingItem[] @relation("Purchaser")
+  lists    ShoppingList[]
+  createdFamilies Family[] @relation("FamilyCreator")
+}
+
+model Family {
+  id        String   @id @default(cuid())
+  name      String
+  inviteCode String  @unique
+  createdBy  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members FamilyMember[]
+  lists   ShoppingList[]
+
+  creator User @relation("FamilyCreator", fields: [createdBy], references: [id])
+}
+
+model FamilyMember {
+  id        String   @id @default(cuid())
+  role      String   @default("member") // admin, member
+  joinedAt  DateTime @default(now())
+
+  userId  String
+  familyId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  family Family @relation(fields: [familyId], references: [id])
+
+  @@unique([userId, familyId])
+}
+
+model ShoppingList {
+  id        String   @id @default(cuid())
+  name      String
+  createdBy  String
+  familyId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family Family       @relation(fields: [familyId], references: [id])
+  creator User        @relation(fields: [createdBy], references: [id])
+  items   ShoppingItem[]
+}
+
+model ShoppingItem {
+  id          String    @id @default(cuid())
+  name        String
+  quantity    Int       @default(1)
+  unit        String    @default("adet")
+  completed   Boolean   @default(false)
+  purchasedBy String?
+  purchasedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  listId  String
+  addedBy String
+
+  list    ShoppingList @relation(fields: [listId], references: [id])
+  adder   User         @relation(fields: [addedBy], references: [id])
+  purchaser User?      @relation("Purchaser", fields: [purchasedBy], references: [id])
+}

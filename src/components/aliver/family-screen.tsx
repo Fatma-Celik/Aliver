@@ -1,0 +1,584 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { QRCodeSVG } from 'qrcode.react'
+import {
+  Users,
+  UserPlus,
+  QrCode,
+  Copy,
+  Check,
+  Crown,
+  LogOut,
+  Shield,
+  Loader2,
+  ScanLine,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { useAppStore, type Family } from '@/store/auth-store'
+import { toast } from 'sonner'
+
+/* ------------------------------------------------------------------ */
+/*  Turkish relative time helper                                      */
+/* ------------------------------------------------------------------ */
+
+function turkishRelativeTime(dateStr: string): string {
+  const now = Date.now()
+  const then = new Date(dateStr).getTime()
+  const diffMs = now - then
+  const diffSec = Math.floor(diffMs / 1000)
+  const diffMin = Math.floor(diffSec / 60)
+  const diffHour = Math.floor(diffMin / 60)
+  const diffDay = Math.floor(diffHour / 24)
+  const diffWeek = Math.floor(diffDay / 7)
+  const diffMonth = Math.floor(diffDay / 30)
+
+  if (diffSec < 60) return 'az önce'
+  if (diffMin < 60) return `${diffMin} dakika önce`
+  if (diffHour < 24) return `${diffHour} saat önce`
+  if (diffDay < 7) return `${diffDay} gün önce`
+  if (diffWeek < 4) return `${diffWeek} hafta önce`
+  if (diffMonth < 12) return `${diffMonth} ay önce`
+  const diffYear = Math.floor(diffMonth / 12)
+  return `${diffYear} yıl önce`
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animation variants                                                 */
+/* ------------------------------------------------------------------ */
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
+export default function FamilyScreen() {
+  const { token, family, setFamily, setLoading, isLoading } = useAppStore()
+
+  // Form states
+  const [createName, setCreateName] = useState('')
+  const [joinCode, setJoinCode] = useState('')
+  const [qrData, setQrData] = useState<{ inviteCode: string; familyName: string; url: string } | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
+
+  /* ---------- Fetch family data on mount ---------- */
+  const fetchFamily = useCallback(async () => {
+    if (!token) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/family/my-family', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setFamily(data.family as Family)
+      } else {
+        setFamily(null)
+      }
+    } catch {
+      // silent
+    } finally {
+      setLoading(false)
+    }
+  }, [token, setFamily, setLoading])
+
+  useEffect(() => {
+    fetchFamily()
+  }, [fetchFamily])
+
+  /* ---------- Fetch QR data when family exists ---------- */
+  const fetchQrData = useCallback(async () => {
+    if (!token) return
+    try {
+      const res = await fetch('/api/family/qr', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setQrData({
+          inviteCode: data.inviteCode,
+          familyName: data.familyName,
+          url: data.url,
+        })
+      }
+    } catch {
+      // silent
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (family) {
+      fetchQrData()
+      setQrData(null)
+    } else {
+      setQrData(null)
+    }
+  }, [family, fetchQrData])
+
+  /* ---------- Create family ---------- */
+  const handleCreate = async () => {
+    const name = createName.trim()
+    if (!name) {
+      toast.error('Aile adı boş olamaz')
+      return
+    }
+    if (!token) return
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/family/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setFamily(data.family as Family)
+        setCreateName('')
+        toast.success('Aile başarıyla oluşturuldu!')
+      } else {
+        const err = await res.json()
+        toast.error(err.error || 'Aile oluşturulamadı')
+      }
+    } catch {
+      toast.error('Bağlantı hatası')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  /* ---------- Join family ---------- */
+  const handleJoin = async () => {
+    const code = joinCode.trim().toUpperCase()
+    if (!code) {
+      toast.error('Davet kodu boş olamaz')
+      return
+    }
+    if (!token) return
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/family/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ inviteCode: code }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setFamily(data.family as Family)
+        setJoinCode('')
+        toast.success('Aileye başarıyla katıldınız!')
+      } else {
+        const err = await res.json()
+        toast.error(err.error || 'Aileye katılınamadı')
+      }
+    } catch {
+      toast.error('Bağlantı hatası')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  /* ---------- Copy invite code ---------- */
+  const handleCopyCode = async () => {
+    if (!qrData) return
+    try {
+      await navigator.clipboard.writeText(qrData.inviteCode)
+      setCopied(true)
+      toast.success('Davet kodu kopyalandı')
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      toast.error('Kopyalanamadı')
+    }
+  }
+
+  /* ---------- Leave family ---------- */
+  const handleLeave = async () => {
+    if (!token) return
+    setActionLoading(true)
+    try {
+      const res = await fetch('/api/family/leave', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        setFamily(null)
+        setLeaveDialogOpen(false)
+        toast.success('Aileden ayrıldınız')
+      } else {
+        const err = await res.json()
+        toast.error(err.error || 'Ayrılırken hata oluştu')
+      }
+    } catch {
+      toast.error('Bağlantı hatası')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  /* ---------- Loading state ---------- */
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <Loader2 className="size-8 animate-spin text-[#FCA311]" />
+      </div>
+    )
+  }
+
+  /* ================================================================ */
+  /*  STATE 1: NO FAMILY                                                */
+  /* ================================================================ */
+  if (!family) {
+    return (
+      <main className="mx-auto min-h-screen w-full max-w-lg bg-black px-4 pb-24 pt-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col gap-6"
+        >
+          {/* Header */}
+          <motion.section variants={itemVariants} className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold text-white/90">Aile Yönetimi</h1>
+            <p className="text-sm text-white/50">
+              Yeni bir aile oluşturun veya mevcut bir aileye katılın
+            </p>
+          </motion.section>
+
+          {/* Two cards: Create + Join */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* Create Family Card */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+              className="dark-card-elevated flex flex-col gap-4 rounded-2xl p-5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
+                  <Users className="size-5 text-[#FCA311]" />
+                </div>
+                <h2 className="text-base font-semibold text-white">Aile Oluştur</h2>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="family-name" className="text-xs text-white/50">
+                  Aile Adı
+                </Label>
+                <Input
+                  id="family-name"
+                  placeholder="Örn: Yeni Aile"
+                  value={createName}
+                  onChange={(e) => setCreateName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:ring-[#FCA311]/40"
+                />
+              </div>
+
+              <Button
+                onClick={handleCreate}
+                disabled={actionLoading || !createName.trim()}
+                className="w-full rounded-full font-semibold text-black"
+                style={{
+                  background: 'linear-gradient(135deg, #FCA311 0%, #E8920A 50%, #D48000 100%)',
+                  boxShadow: '0 4px 16px rgba(252, 163, 17, 0.2)',
+                }}
+              >
+                {actionLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Users className="size-4" />
+                )}
+                Oluştur
+              </Button>
+            </motion.div>
+
+            {/* Join Family Card */}
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.02, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+              className="dark-card-elevated flex flex-col gap-4 rounded-2xl p-5"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
+                  <UserPlus className="size-5 text-[#FCA311]" />
+                </div>
+                <h2 className="text-base font-semibold text-white">Aileye Katıl</h2>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="invite-code" className="text-xs text-white/50">
+                  Davet Kodu
+                </Label>
+                <Input
+                  id="invite-code"
+                  placeholder="Örn: ABC123"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
+                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 font-mono uppercase tracking-widest text-white placeholder:text-white/30 placeholder:normal-case placeholder:tracking-normal focus-visible:ring-[#FCA311]/40"
+                />
+              </div>
+
+              <Button
+                onClick={handleJoin}
+                disabled={actionLoading || !joinCode.trim()}
+                className="w-full rounded-full bg-[#14213D] font-semibold text-[#FCA311] hover:bg-[#14213D]/80"
+              >
+                {actionLoading ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <UserPlus className="size-4" />
+                )}
+                Katıl
+              </Button>
+
+              <p className="flex items-center gap-1.5 text-center text-xs text-white/30">
+                <ScanLine className="size-3 shrink-0" />
+                QR kod ile katılmak için kamerayı kullanın
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+      </main>
+    )
+  }
+
+  /* ================================================================ */
+  /*  STATE 2: HAS FAMILY                                               */
+  /* ================================================================ */
+  return (
+    <main className="mx-auto min-h-screen w-full max-w-lg bg-black px-4 pb-24 pt-6">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={family.id}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col gap-6"
+        >
+          {/* ─── Family Header ─── */}
+          <motion.section variants={itemVariants} className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
+                <Shield className="size-5 text-[#FCA311]" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white/90">{family.name}</h1>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <Badge
+                    variant="secondary"
+                    className="rounded-full bg-[#FCA311]/10 px-2 py-0 text-xs font-medium text-[#FCA311] hover:bg-[#FCA311]/15"
+                  >
+                    {family.members.length} üye
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* ─── QR Code Section ─── */}
+          <motion.section
+            variants={itemVariants}
+            className="dark-card-elevated flex flex-col items-center gap-4 rounded-2xl p-6"
+          >
+            <div className="flex items-center gap-2 text-sm font-semibold text-white/70">
+              <QrCode className="size-4 text-[#FCA311]" />
+              Davet QR Kodu
+            </div>
+
+            {/* QR Code */}
+            <div className="rounded-xl bg-white p-3">
+              <QRCodeSVG
+                value={qrData?.url ?? `aliver://join/${family.inviteCode}`}
+                size={180}
+                bgColor="#FFFFFF"
+                fgColor="#14213D"
+                level="M"
+                includeMargin={false}
+              />
+            </div>
+
+            {/* Invite Code Display */}
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-xs text-white/40">Davet Kodu</p>
+              <div className="flex items-center gap-2">
+                <span className="rounded-lg bg-[#FCA311]/10 px-4 py-1.5 font-mono text-lg font-bold tracking-[0.2em] text-[#FCA311]">
+                  {qrData?.inviteCode ?? family.inviteCode}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCopyCode}
+                  className="size-9 rounded-lg text-white/50 hover:bg-[#FCA311]/10 hover:text-[#FCA311]"
+                >
+                  {copied ? (
+                    <Check className="size-4 text-green-400" />
+                  ) : (
+                    <Copy className="size-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </motion.section>
+
+          <Separator className="bg-white/[0.06]" />
+
+          {/* ─── Members List ─── */}
+          <motion.section variants={itemVariants} className="flex flex-col gap-3">
+            <h3 className="flex items-center gap-2 text-base font-semibold text-white">
+              <Users className="size-4 text-[#FCA311]" />
+              Üyeler
+            </h3>
+
+            <div className="flex max-h-96 flex-col gap-2 overflow-y-auto">
+              {family.members.map((member, index) => {
+                const isAdmin = member.role === 'admin'
+                return (
+                  <motion.div
+                    key={member.id}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: 0.15 + index * 0.06,
+                      ease: 'easeOut',
+                    }}
+                    className="dark-card flex items-center gap-3 rounded-xl px-4 py-3"
+                  >
+                    {/* Avatar - first letter circle in gold */}
+                    <div
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                      style={{
+                        background: isAdmin
+                          ? 'linear-gradient(135deg, #FCA311 0%, #E8920A 100%)'
+                          : 'rgba(252, 163, 17, 0.12)',
+                        color: isAdmin ? '#000000' : '#FCA311',
+                      }}
+                    >
+                      {member.user.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    {/* Name & meta */}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-white">
+                        {member.user.name}
+                      </p>
+                      <p className="text-xs text-white/40">
+                        {turkishRelativeTime(member.joinedAt)} katıldı
+                      </p>
+                    </div>
+
+                    {/* Role badge */}
+                    <Badge
+                      variant="secondary"
+                      className={
+                        isAdmin
+                          ? 'shrink-0 gap-1 rounded-full bg-[#FCA311]/15 px-2.5 py-0.5 text-xs font-medium text-[#FCA311]'
+                          : 'shrink-0 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium text-white/40'
+                      }
+                    >
+                      {isAdmin ? (
+                        <>
+                          <Crown className="size-3" />
+                          Admin
+                        </>
+                      ) : (
+                        'Üye'
+                      )}
+                    </Badge>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </motion.section>
+
+          {/* ─── Leave Family Button ─── */}
+          <motion.section variants={itemVariants} className="mt-2">
+            <Button
+              onClick={() => setLeaveDialogOpen(true)}
+              variant="ghost"
+              className="w-full rounded-xl border border-red-500/20 bg-red-500/5 py-5 text-sm font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300"
+            >
+              <LogOut className="size-4" />
+              Aileden Ayrıl
+            </Button>
+          </motion.section>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* ─── Leave Family Dialog ─── */}
+      <Dialog open={leaveDialogOpen} onOpenChange={setLeaveDialogOpen}>
+        <DialogContent className="max-w-sm rounded-2xl border-white/[0.08] bg-[#0D1B2A] p-6 sm:rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-white">
+              <LogOut className="size-5 text-red-400" />
+              Aileden Ayrıl
+            </DialogTitle>
+            <DialogDescription className="text-sm text-white/50">
+              <span className="font-semibold text-white/80">{family.name}</span> ailesinden ayrılmak
+              istediğinize emin misiniz? Bu işlemi geri alamazsınız.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-3 pt-2">
+            <Button
+              variant="ghost"
+              onClick={() => setLeaveDialogOpen(false)}
+              className="flex-1 rounded-xl bg-white/[0.06] text-white/70 hover:bg-white/[0.1] hover:text-white"
+            >
+              İptal
+            </Button>
+            <Button
+              onClick={handleLeave}
+              disabled={actionLoading}
+              className="flex-1 rounded-xl bg-red-500/90 font-semibold text-white hover:bg-red-500"
+            >
+              {actionLoading ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                'Ayrıl'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </main>
+  )
+}
