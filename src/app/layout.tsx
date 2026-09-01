@@ -47,11 +47,6 @@ export default function RootLayout({
           position="top-center"
           toastOptions={{
             style: {
-              background: 'rgba(20, 33, 61, 0.9)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(252, 163, 17, 0.15)',
-              color: '#FFFFFF',
               fontFamily: 'Outfit, system-ui, sans-serif',
             },
           }}

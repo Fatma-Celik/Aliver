@@ -6,13 +6,14 @@ import {
   User,
   Bell,
   Globe,
-  Palette,
   LogOut,
   Shield,
   ListChecks,
   Users,
   ChevronRight,
   Loader2,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { useAppStore } from '@/store/auth-store'
@@ -49,7 +50,7 @@ interface Stats {
 /* ------------------------------------------------------------------ */
 
 export default function ProfileScreen() {
-  const { user, family, logout } = useAppStore()
+  const { user, family, logout, toggleTheme, theme } = useAppStore()
   const [notifications, setNotifications] = useState(true)
   const [stats, setStats] = useState<Stats>({ members: 0, lists: 0, completed: 0 })
   const [loadingStats, setLoadingStats] = useState(true)
@@ -125,13 +126,13 @@ export default function ProfileScreen() {
           >
             {firstLetter}
           </div>
-          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#14213D] flex items-center justify-center">
-            <Shield className="w-3.5 h-3.5 text-[#FCA311]" />
+          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+            <Shield className="w-3.5 h-3.5 text-primary" />
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-white">{user.name}</h2>
-          <p className="text-sm text-white/50 mt-0.5">{user.email}</p>
+          <h2 className="text-xl font-semibold text-foreground">{user.name}</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{user.email}</p>
         </div>
       </motion.div>
 
@@ -139,7 +140,7 @@ export default function ProfileScreen() {
       <motion.div variants={item} className="grid grid-cols-3 gap-3">
         {loadingStats ? (
           <div className="col-span-3 flex justify-center py-6">
-            <Loader2 className="w-5 h-5 animate-spin text-[#FCA311]" />
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
           </div>
         ) : (
           <>
@@ -151,46 +152,49 @@ export default function ProfileScreen() {
       </motion.div>
 
       {/* ---- Settings List ---- */}
-      <motion.div variants={item} className="glass-card rounded-2xl divide-y divide-white/5">
+      <motion.div variants={item} className="glass-card rounded-2xl divide-y divide-border">
         {/* Notifications */}
         <div className="flex items-center justify-between px-4 py-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FCA311]/10 flex items-center justify-center">
-              <Bell className="w-4 h-4 text-[#FCA311]" />
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Bell className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-sm font-medium text-white">Bildirimler</span>
+            <span className="text-sm font-medium text-foreground">Bildirimler</span>
           </div>
           <Switch
             checked={notifications}
             onCheckedChange={setNotifications}
-            className="data-[state=checked]:bg-[#FCA311]"
+            className="data-[state=checked]:bg-primary"
           />
+        </div>
+
+        {/* Theme */}
+        <div
+          className="flex items-center justify-between px-4 py-3.5 cursor-pointer"
+          onClick={toggleTheme}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              {theme === 'light' ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4 text-primary" />}
+            </div>
+            <span className="text-sm font-medium text-foreground">Tema</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="text-sm">{theme === 'dark' ? 'Karanlık Platini' : 'Açık Platini'}</span>
+            <ChevronRight className="w-4 h-4" />
+          </div>
         </div>
 
         {/* Language */}
         <div className="flex items-center justify-between px-4 py-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FCA311]/10 flex items-center justify-center">
-              <Globe className="w-4 h-4 text-[#FCA311]" />
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Globe className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-sm font-medium text-white">Dil seçimi</span>
+            <span className="text-sm font-medium text-foreground">Dil Seçimi</span>
           </div>
-          <div className="flex items-center gap-1.5 text-white/40">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
             <span className="text-sm">Türkçe</span>
-            <ChevronRight className="w-4 h-4" />
-          </div>
-        </div>
-
-        {/* Theme */}
-        <div className="flex items-center justify-between px-4 py-3.5">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FCA311]/10 flex items-center justify-center">
-              <Palette className="w-4 h-4 text-[#FCA311]" />
-            </div>
-            <span className="text-sm font-medium text-white">Tema</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-white/40">
-            <span className="text-sm">Karanlık Platini</span>
             <ChevronRight className="w-4 h-4" />
           </div>
         </div>
@@ -200,7 +204,7 @@ export default function ProfileScreen() {
       <motion.div variants={item}>
         <button
           onClick={logout}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-[#FCA311]/40 text-[#FCA311] text-sm font-semibold hover:bg-[#FCA311]/10 active:scale-[0.98] transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-primary/40 text-primary text-sm font-semibold hover:bg-primary/10 active:scale-[0.98] transition-all"
         >
           <LogOut className="w-4 h-4" />
           Çıkış Yap
@@ -217,9 +221,9 @@ export default function ProfileScreen() {
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
     <div className="glass-card hover-border-glow rounded-2xl p-4 flex flex-col items-center gap-2 text-center">
-      <div className="text-[#FCA311]">{icon}</div>
-      <span className="text-2xl font-bold text-white tabular-nums">{value}</span>
-      <span className="text-[11px] text-white/40 leading-tight">{label}</span>
+      <div className="text-primary">{icon}</div>
+      <span className="text-2xl font-bold text-foreground tabular-nums">{value}</span>
+      <span className="text-[11px] text-muted-foreground leading-tight">{label}</span>
     </div>
   )
 }

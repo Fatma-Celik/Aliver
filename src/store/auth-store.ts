@@ -62,11 +62,14 @@ export interface AppState {
   setActiveTab: (tab: 'home' | 'family' | 'list' | 'profile') => void
   isLoading: boolean
   setLoading: (loading: boolean) => void
+  theme: 'dark' | 'light'
+  setTheme: (theme: 'dark' | 'light') => void
+  toggleTheme: () => void
 }
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: null,
       user: null,
       setAuth: (token, user) => set({ token, user }),
@@ -81,6 +84,9 @@ export const useAppStore = create<AppState>()(
       setActiveTab: (tab) => set({ activeTab: tab }),
       isLoading: false,
       setLoading: (loading) => set({ isLoading: loading }),
+      theme: 'dark',
+      setTheme: (theme) => set({ theme }),
+      toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
     }),
     {
       name: 'aliver-storage',
@@ -88,6 +94,7 @@ export const useAppStore = create<AppState>()(
         token: state.token,
         user: state.user,
         activeTab: state.activeTab,
+        theme: state.theme,
       }),
     }
   )

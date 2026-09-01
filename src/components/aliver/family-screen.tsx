@@ -257,8 +257,8 @@ export default function FamilyScreen() {
   /* ---------- Loading state ---------- */
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="size-8 animate-spin text-[#FCA311]" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -268,7 +268,7 @@ export default function FamilyScreen() {
   /* ================================================================ */
   if (!family) {
     return (
-      <main className="mx-auto min-h-screen w-full max-w-lg bg-black px-4 pb-24 pt-6">
+      <main className="mx-auto min-h-screen w-full max-w-lg bg-background px-4 pb-24 pt-6">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -277,8 +277,8 @@ export default function FamilyScreen() {
         >
           {/* Header */}
           <motion.section variants={itemVariants} className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-white/90">Aile Yönetimi</h1>
-            <p className="text-sm text-white/50">
+            <h1 className="text-2xl font-bold text-foreground/90">Aile Yönetimi</h1>
+            <p className="text-sm text-muted-foreground">
               Yeni bir aile oluşturun veya mevcut bir aileye katılın
             </p>
           </motion.section>
@@ -292,14 +292,14 @@ export default function FamilyScreen() {
               className="glass-card hover-glow flex flex-col gap-4 rounded-2xl p-5"
             >
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
-                  <Users className="size-5 text-[#FCA311]" />
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                  <Users className="size-5 text-primary" />
                 </div>
-                <h2 className="text-base font-semibold text-white">Aile Oluştur</h2>
+                <h2 className="text-base font-semibold text-foreground">Aile Oluştur</h2>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="family-name" className="text-xs text-white/50">
+                <Label htmlFor="family-name" className="text-xs text-muted-foreground">
                   Aile Adı
                 </Label>
                 <Input
@@ -308,7 +308,7 @@ export default function FamilyScreen() {
                   value={createName}
                   onChange={(e) => setCreateName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:ring-[#FCA311]/40 glass-input"
+                  className="h-10 rounded-lg border-primary/25 text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-primary/40 glass-input"
                 />
               </div>
 
@@ -337,14 +337,14 @@ export default function FamilyScreen() {
               className="glass-card hover-glow flex flex-col gap-4 rounded-2xl p-5"
             >
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
-                  <UserPlus className="size-5 text-[#FCA311]" />
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                  <UserPlus className="size-5 text-primary" />
                 </div>
-                <h2 className="text-base font-semibold text-white">Aileye Katıl</h2>
+                <h2 className="text-base font-semibold text-foreground">Aileye Katıl</h2>
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="invite-code" className="text-xs text-white/50">
+                <Label htmlFor="invite-code" className="text-xs text-muted-foreground">
                   Davet Kodu
                 </Label>
                 <Input
@@ -353,14 +353,14 @@ export default function FamilyScreen() {
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
-                  className="h-10 rounded-lg border-[#FCA311]/20 bg-black/40 font-mono uppercase tracking-widest text-white placeholder:text-white/30 placeholder:normal-case placeholder:tracking-normal focus-visible:ring-[#FCA311]/40 glass-input"
+                  className="h-10 rounded-lg border-primary/25 font-mono uppercase tracking-widest text-foreground placeholder:text-muted-foreground/50 placeholder:normal-case placeholder:tracking-normal focus-visible:ring-primary/40 glass-input"
                 />
               </div>
 
               <Button
                 onClick={handleJoin}
                 disabled={actionLoading || !joinCode.trim()}
-                className="w-full rounded-full bg-[#14213D] font-semibold text-[#FCA311] hover:bg-[#14213D]/80 hover-shine"
+                className="w-full rounded-full bg-secondary font-semibold text-primary hover:bg-secondary/80 hover-shine"
               >
                 {actionLoading ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -370,7 +370,7 @@ export default function FamilyScreen() {
                 Katıl
               </Button>
 
-              <p className="flex items-center gap-1.5 text-center text-xs text-white/30">
+              <p className="flex items-center gap-1.5 text-center text-xs text-muted-foreground/50">
                 <ScanLine className="size-3 shrink-0" />
                 QR kod ile katılmak için kamerayı kullanın
               </p>
@@ -385,7 +385,7 @@ export default function FamilyScreen() {
   /*  STATE 2: HAS FAMILY                                               */
   /* ================================================================ */
   return (
-    <main className="mx-auto min-h-screen w-full max-w-lg bg-black px-4 pb-24 pt-6">
+    <main className="mx-auto min-h-screen w-full max-w-lg bg-background px-4 pb-24 pt-6">
       <AnimatePresence mode="wait">
         <motion.div
           key={family.id}
@@ -397,15 +397,15 @@ export default function FamilyScreen() {
           {/* ─── Family Header ─── */}
           <motion.section variants={itemVariants} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
-                <Shield className="size-5 text-[#FCA311]" />
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                <Shield className="size-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white/90">{family.name}</h1>
+                <h1 className="text-2xl font-bold text-foreground/90">{family.name}</h1>
                 <div className="mt-0.5 flex items-center gap-2">
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-[#FCA311]/10 px-2 py-0 text-xs font-medium text-[#FCA311] hover:bg-[#FCA311]/15"
+                    className="rounded-full bg-primary/10 px-2 py-0 text-xs font-medium text-primary hover:bg-primary/15"
                   >
                     {family.members.length} üye
                   </Badge>
@@ -419,8 +419,8 @@ export default function FamilyScreen() {
             variants={itemVariants}
             className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6"
           >
-            <div className="flex items-center gap-2 text-sm font-semibold text-white/70">
-              <QrCode className="size-4 text-[#FCA311]" />
+            <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+              <QrCode className="size-4 text-primary" />
               Davet QR Kodu
             </div>
 
@@ -438,19 +438,19 @@ export default function FamilyScreen() {
 
             {/* Invite Code Display */}
             <div className="flex flex-col items-center gap-2">
-              <p className="text-xs text-white/40">Davet Kodu</p>
+              <p className="text-xs text-muted-foreground/70">Davet Kodu</p>
               <div className="flex items-center gap-2">
-                <span className="rounded-lg bg-[#FCA311]/10 px-4 py-1.5 font-mono text-lg font-bold tracking-[0.2em] text-[#FCA311]">
+                <span className="rounded-lg bg-primary/10 px-4 py-1.5 font-mono text-lg font-bold tracking-[0.2em] text-primary">
                   {qrData?.inviteCode ?? family.inviteCode}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleCopyCode}
-                  className="size-9 rounded-lg text-white/50 hover:bg-[#FCA311]/10 hover:text-[#FCA311]"
+                  className="size-9 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"
                 >
                   {copied ? (
-                    <Check className="size-4 text-green-400" />
+                    <Check className="size-4 text-green-500" />
                   ) : (
                     <Copy className="size-4" />
                   )}
@@ -459,12 +459,12 @@ export default function FamilyScreen() {
             </div>
           </motion.section>
 
-          <Separator className="bg-white/[0.06]" />
+          <Separator className="bg-border" />
 
           {/* ─── Members List ─── */}
           <motion.section variants={itemVariants} className="flex flex-col gap-3">
-            <h3 className="flex items-center gap-2 text-base font-semibold text-white">
-              <Users className="size-4 text-[#FCA311]" />
+            <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
+              <Users className="size-4 text-primary" />
               Üyeler
             </h3>
 
@@ -498,10 +498,10 @@ export default function FamilyScreen() {
 
                     {/* Name & meta */}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-white">
+                      <p className="truncate text-sm font-semibold text-foreground">
                         {member.user.name}
                       </p>
-                      <p className="text-xs text-white/40">
+                      <p className="text-xs text-muted-foreground/70">
                         {turkishRelativeTime(member.joinedAt)} katıldı
                       </p>
                     </div>
@@ -511,8 +511,8 @@ export default function FamilyScreen() {
                       variant="secondary"
                       className={
                         isAdmin
-                          ? 'shrink-0 gap-1 rounded-full bg-[#FCA311]/15 px-2.5 py-0.5 text-xs font-medium text-[#FCA311]'
-                          : 'shrink-0 rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium text-white/40'
+                          ? 'shrink-0 gap-1 rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-medium text-primary'
+                          : 'shrink-0 rounded-full bg-border px-2.5 py-0.5 text-xs font-medium text-muted-foreground/70'
                       }
                     >
                       {isAdmin ? (
@@ -535,7 +535,7 @@ export default function FamilyScreen() {
             <Button
               onClick={() => setLeaveDialogOpen(true)}
               variant="ghost"
-              className="w-full rounded-xl border border-red-500/20 bg-red-500/5 py-5 text-sm font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              className="w-full rounded-xl border border-destructive/20 bg-destructive/5 py-5 text-sm font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive/80"
             >
               <LogOut className="size-4" />
               Aileden Ayrıl
@@ -546,14 +546,14 @@ export default function FamilyScreen() {
 
       {/* ─── Leave Family Dialog ─── */}
       <Dialog open={leaveDialogOpen} onOpenChange={setLeaveDialogOpen}>
-        <DialogContent className="max-w-sm rounded-2xl border-white/[0.08] bg-[#0D1B2A] p-6 sm:rounded-2xl">
+        <DialogContent className="max-w-sm rounded-2xl border-border bg-background p-6 sm:rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-white">
-              <LogOut className="size-5 text-red-400" />
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground">
+              <LogOut className="size-5 text-destructive" />
               Aileden Ayrıl
             </DialogTitle>
-            <DialogDescription className="text-sm text-white/50">
-              <span className="font-semibold text-white/80">{family.name}</span> ailesinden ayrılmak
+            <DialogDescription className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground/80">{family.name}</span> ailesinden ayrılmak
               istediğinize emin misiniz? Bu işlemi geri alamazsınız.
             </DialogDescription>
           </DialogHeader>
@@ -561,14 +561,14 @@ export default function FamilyScreen() {
             <Button
               variant="ghost"
               onClick={() => setLeaveDialogOpen(false)}
-              className="flex-1 rounded-xl bg-white/[0.06] text-white/70 hover:bg-white/[0.1] hover:text-white"
+              className="flex-1 rounded-xl bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
             >
               İptal
             </Button>
             <Button
               onClick={handleLeave}
               disabled={actionLoading}
-              className="flex-1 rounded-xl bg-red-500/90 font-semibold text-white hover:bg-red-500"
+              className="flex-1 rounded-xl bg-destructive/90 font-semibold text-foreground hover:bg-destructive"
             >
               {actionLoading ? (
                 <Loader2 className="size-4 animate-spin" />

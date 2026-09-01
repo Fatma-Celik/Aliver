@@ -168,14 +168,14 @@ export default function HomeScreen() {
   /* ---------- Loading state ---------- */
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <Loader2 className="size-8 animate-spin text-[#FCA311]" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-lg bg-black px-4 pb-24 pt-6">
+    <main className="mx-auto min-h-screen w-full max-w-lg bg-background px-4 pb-24 pt-6">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -184,11 +184,11 @@ export default function HomeScreen() {
       >
         {/* ─── Welcome Section ─── */}
         <motion.section variants={itemVariants} className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-white/90">
+          <h1 className="text-2xl font-bold text-foreground/90">
             Merhaba,{' '}
             <span className="platini-text-gradient">{user?.name ?? 'Kullanıcı'}</span>
           </h1>
-          <p className="text-sm text-white/50">
+          <p className="text-sm text-muted-foreground">
             {formatTurkishDate(now)}
           </p>
         </motion.section>
@@ -223,7 +223,7 @@ export default function HomeScreen() {
                 </div>
                 <Button
                   onClick={handleCreateFamily}
-                  className="w-full justify-center gap-2 rounded-full bg-black text-sm font-semibold text-[#FCA311] hover:bg-black/80"
+                  className="w-full justify-center gap-2 rounded-full bg-background text-sm font-semibold text-primary hover:bg-secondary/80"
                 >
                   <Plus className="size-4" />
                   Aile Oluştur
@@ -242,18 +242,18 @@ export default function HomeScreen() {
                 className="glass-card hover-glow flex cursor-pointer items-center gap-4 rounded-2xl p-4"
                 onClick={handleCreateFamily}
               >
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#FCA311]/15">
-                  <Users className="size-6 text-[#FCA311]" />
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+                  <Users className="size-6 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-base font-semibold text-white">
+                  <h2 className="truncate text-base font-semibold text-foreground">
                     {family.name}
                   </h2>
-                  <p className="text-sm text-white/50">
+                  <p className="text-sm text-muted-foreground">
                     {family.members.length} üye
                   </p>
                 </div>
-                <ChevronRight className="size-5 shrink-0 text-white/30" />
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground/50" />
               </motion.div>
             </motion.section>
 
@@ -266,24 +266,24 @@ export default function HomeScreen() {
                 whileHover={cardHover}
                 className="glass-card hover-border-glow flex flex-col items-center gap-2 rounded-2xl p-4"
               >
-                <div className="flex size-9 items-center justify-center rounded-lg bg-[#FCA311]/15">
-                  <ShoppingCart className="size-4 text-[#FCA311]" />
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/15">
+                  <ShoppingCart className="size-4 text-primary" />
                 </div>
-                <span className="text-2xl font-bold text-white">{totalLists}</span>
-                <span className="text-xs text-white/50">Liste</span>
+                <span className="text-2xl font-bold text-foreground">{totalLists}</span>
+                <span className="text-xs text-muted-foreground">Liste</span>
               </motion.div>
 
               <motion.div
                 whileHover={cardHover}
                 className="glass-card hover-border-glow flex flex-col items-center gap-2 rounded-2xl p-4"
               >
-                <div className="flex size-9 items-center justify-center rounded-lg bg-[#FCA311]/15">
-                  <TrendingUp className="size-4 text-[#FCA311]" />
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/15">
+                  <TrendingUp className="size-4 text-primary" />
                 </div>
-                <span className="text-2xl font-bold text-white">
+                <span className="text-2xl font-bold text-foreground">
                   {totalPending}
                 </span>
-                <span className="text-xs text-white/50">Bekleyen Ürün</span>
+                <span className="text-xs text-muted-foreground">Bekleyen Ürün</span>
               </motion.div>
             </motion.section>
           </>
@@ -293,12 +293,12 @@ export default function HomeScreen() {
         {family && (
           <motion.section variants={itemVariants} className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-base font-semibold text-white">
-                <ListChecks className="size-4 text-[#FCA311]" />
+              <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
+                <ListChecks className="size-4 text-primary" />
                 Son Listeler
               </h3>
               {lists.length > 0 && (
-                <span className="text-xs text-white/40">
+                <span className="text-xs text-muted-foreground">
                   {lists.length} liste
                 </span>
               )}
@@ -312,14 +312,14 @@ export default function HomeScreen() {
                 transition={{ duration: 0.4, delay: 0.2 }}
                 className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
               >
-                <div className="flex size-14 items-center justify-center rounded-full bg-white/5">
-                  <ShoppingCart className="size-7 text-white/20" />
+                <div className="flex size-14 items-center justify-center rounded-full bg-primary/5">
+                  <ShoppingCart className="size-7 text-muted-foreground/30" />
                 </div>
                 <div className="flex flex-col items-center gap-1">
-                  <p className="text-sm font-medium text-white/50">
+                  <p className="text-sm font-medium text-muted-foreground">
                     Henüz liste oluşturulmadı
                   </p>
-                  <p className="text-xs text-white/30">
+                  <p className="text-xs text-muted-foreground/50">
                     Ailenizle paylaşmak için bir liste oluşturun
                   </p>
                 </div>
@@ -344,22 +344,22 @@ export default function HomeScreen() {
                     >
                       {/* List name */}
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="truncate text-sm font-semibold text-white">
+                        <h4 className="truncate text-sm font-semibold text-foreground">
                           {list.name}
                         </h4>
-                        <Sparkles className="size-3.5 shrink-0 text-[#FCA311]/60" />
+                        <Sparkles className="size-3.5 shrink-0 text-primary/60" />
                       </div>
 
                       {/* Item counts */}
-                      <p className="text-xs text-white/50">
-                        <span className="font-medium text-[#FCA311]">
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium text-primary">
                           {completed}
                         </span>{' '}
                         / {total} tamamlandı
                       </p>
 
                       {/* Progress bar */}
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
                         <motion.div
                           className="h-full rounded-full"
                           style={{ background: 'linear-gradient(90deg, #FCA311 0%, #FFD60A 100%)' }}

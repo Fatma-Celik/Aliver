@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ShoppingCart } from 'lucide-react'
 import { useAppStore } from '@/store/auth-store'
 import AuthScreen from '@/components/aliver/auth-screen'
 import HomeScreen from '@/components/aliver/home-screen'
@@ -9,6 +10,39 @@ import FamilyScreen from '@/components/aliver/family-screen'
 import ListScreen from '@/components/aliver/list-screen'
 import ProfileScreen from '@/components/aliver/profile-screen'
 import BottomNav from '@/components/aliver/bottom-nav'
+
+function ThemeSync() {
+  const { theme } = useAppStore()
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+  return null
+}
+
+function FabWidget() {
+  const { setActiveTab, activeTab, activeList } = useAppStore()
+
+  const handleClick = () => {
+    setActiveTab('list')
+  }
+
+  if (activeTab === 'list' && activeList) return null
+
+  return (
+    <motion.button
+      className="fab-basket"
+      onClick={handleClick}
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.92 }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
+      aria-label="Alışveriş Listesine Git"
+    >
+      <ShoppingCart className="size-6 text-white" strokeWidth={2} />
+    </motion.button>
+  )
+}
 
 function AppContent() {
   const { token, user, activeTab } = useAppStore()
@@ -19,13 +53,11 @@ function AppContent() {
     setMounted(true)
   }, [])
 
-  // Verify token on mount
   useEffect(() => {
     if (!token) {
       setInitialCheck(false)
       return
     }
-
     const verifyToken = async () => {
       try {
         const res = await fetch('/api/auth/me', {
@@ -35,12 +67,10 @@ function AppContent() {
           useAppStore.getState().logout()
         }
       } catch {
-        // Token invalid or network error, keep as is for offline
       } finally {
         setInitialCheck(false)
       }
     }
-
     verifyToken()
   }, [token])
 
@@ -65,62 +95,38 @@ function AppContent() {
     )
   }
 
-  // Not authenticated
   if (!token || !user) {
-    return <AuthScreen />
+    return <><ThemeSync /><AuthScreen /></>
   }
 
-  // Authenticated - show app with bottom nav
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
+      <ThemeSync />
       <main className="pb-20">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
-            <motion.div
-              key="home"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="home" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
               <HomeScreen />
             </motion.div>
           )}
           {activeTab === 'family' && (
-            <motion.div
-              key="family"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="family" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
               <FamilyScreen />
             </motion.div>
           )}
           {activeTab === 'list' && (
-            <motion.div
-              key="list"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="list" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
               <ListScreen />
             </motion.div>
           )}
           {activeTab === 'profile' && (
-            <motion.div
-              key="profile"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-            >
+            <motion.div key="profile" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>
               <ProfileScreen />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
+      <FabWidget />
       <BottomNav />
     </div>
   )

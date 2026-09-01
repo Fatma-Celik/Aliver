@@ -112,3 +112,118 @@ Stage Summary:
 - Primary gold buttons received `hover-shine` class
 - No functionality/logic changes — CSS class updates only
 - ESLint passes cleanly
+
+---
+Task ID: 5a
+Agent: Main Orchestrator
+Task: Auth screen light theme support, Google login button, titleCase utility
+
+Work Log:
+- Replaced all hardcoded dark colors with theme-aware Tailwind classes (bg-background, text-foreground, text-muted-foreground, border-primary, etc.)
+- Added `Chrome` icon import from lucide-react and `toast` import from sonner
+- Added `titleCase` utility function at top of file, applied to name input onChange
+- Added Google login button ("Google ile Giriş Yap") with Chrome icon, rounded-full, bg-foreground text-background style
+- Added "veya" separator line between submit and Google buttons
+- Google button triggers toast.info about Supabase setup requirement
+- Submit button gradient and hover-shine preserved, added empty style prop
+- ALIVER title text-glow-gold platini-text-gradient preserved
+- Decorative blur bg-[#FCA311]/10 kept as-is
+- ESLint passes cleanly
+
+Stage Summary:
+- Auth screen now fully theme-aware (light/dark mode compatible)
+- Google login button with informational toast added
+- Name input auto-capitalizes first letter of each word via titleCase
+
+---
+Task ID: 5b
+Agent: Main Orchestrator
+Task: List screen enhancements - titleCase, search bar, list management buttons, delete API, light theme
+
+Work Log:
+- Added `titleCase` utility function at top of file, applied to name input and new list name input onChange handlers
+- Added `Search, CheckCircle, AlertCircle` imports from lucide-react
+- Added search bar (glass-card, rounded-full) in ItemsView between header and summary bar
+- Added `searchQuery` state, `filteredItems` computed array filtering by item name
+- Search bar shows filtered item count ("X ürün") and clear button with AlertCircle icon
+- Search bar hidden when searchQuery empty AND no items (shows empty state instead)
+- Added "no results" empty state when search has no matches
+- Added delete button (Trash2, red tinted) and check-all button (CheckCircle, gold/amber tinted) to each list card
+- Delete: calls DELETE /api/lists/[id] with family membership verification, toast success
+- Check-all: fetches all items, PATCHes each incomplete item, toast success
+- Created /api/lists/[id]/route.ts: DELETE endpoint with auth, family verification, cascading delete (items then list)
+- Replaced ALL hardcoded dark colors with theme-aware classes:
+  - bg-black → bg-background, text-white → text-foreground
+  - text-white/90 → text-foreground, text-white/70 → text-muted-foreground
+  - text-white/50 → text-muted-foreground, text-white/40 → text-muted-foreground/70
+  - text-white/30 → text-muted-foreground/50, text-white/20 → text-muted-foreground/30
+  - bg-white/5 → bg-primary/5, bg-white/[0.06] → bg-border
+  - text-[#FCA311] → text-primary, bg-[#FCA311] → bg-primary
+  - hover:bg-[#FCA311]/90 → hover:bg-primary/90
+  - bg-[#FCA311]/15 → bg-primary/15, border-[#FCA311]/20 → border-primary/15
+  - text-green-400 → text-green-500
+  - text-red-400 → text-destructive, hover:bg-red-500/10 → hover:bg-destructive/10
+- ESLint passes cleanly
+
+Stage Summary:
+- List screen fully theme-aware (light/dark mode compatible)
+- Search/filter functionality added to items view
+- List management: per-list delete and check-all with loading states
+- New DELETE API endpoint /api/lists/[id] with family-scoped authorization
+
+---
+Task ID: 5c
+Agent: Main Orchestrator
+Task: Light theme support for 4 ALIVER component files (home, family, profile, bottom-nav)
+
+Work Log:
+- home-screen.tsx: Replaced all hardcoded dark colors with theme-aware Tailwind classes
+  - bg-background for page containers, text-foreground for headings
+  - text-muted-foreground for secondary text, text-muted-foreground/70, /50, /30 for opacity variants
+  - bg-primary/15, text-primary for gold accent elements
+  - bg-primary/5 for empty state icon bg, bg-border for progress bar track
+  - bg-background + text-primary + hover:bg-secondary/80 for CTA button
+  - Preserved inline gradient styles on CTA card and progress bar (design elements)
+  - Preserved bg-black/20, text-black on gold gradient CTA overlay (intentional contrast)
+- family-screen.tsx: Replaced all hardcoded dark colors with theme-aware Tailwind classes
+  - bg-background for page/loading containers, text-foreground for all headings
+  - bg-primary/15, text-primary for icon containers and accent text
+  - bg-primary/10, hover:bg-primary/15 for badges
+  - border-primary/25 for input borders, removed bg-black/40 (glass-input handles it)
+  - bg-secondary + hover:bg-secondary/80 for "Katıl" button
+  - bg-border for separators, bg-border for non-admin member badges
+  - text-green-500 for check icon, text-destructive + border-destructive/20 for leave button
+  - Dialog: bg-background, border-border, text-foreground, bg-destructive/90, hover:bg-destructive
+  - Cancel button: bg-secondary text-muted-foreground hover:bg-secondary/80
+  - Preserved inline gradient styles on create button and member avatars
+- profile-screen.tsx: Replaced all hardcoded dark colors with theme-aware Tailwind classes
+  - Added Sun, Moon imports from lucide-react, removed Palette import
+  - Added `const { toggleTheme, theme } = useAppStore()` to component
+  - bg-primary/10, text-primary for settings icon containers
+  - text-foreground for labels, text-muted-foreground for value text
+  - divide-white/5 → divide-border for settings list divider
+  - data-[state=checked]:bg-[#FCA311] → data-[state=checked]:bg-primary
+  - bg-[#14213D] → bg-secondary for shield badge container
+  - border-[#FCA311]/40 → border-primary/40 for logout button
+  - StatCard: text-primary, text-foreground, text-muted-foreground
+  - Added NEW theme toggle row BEFORE "Dil Seçimi":
+    - Icon: Sun (light) / Moon (dark) based on theme
+    - Label: 'Tema'
+    - Value: 'Karanlık Platini' (dark) / 'Açık Platini' (light)
+    - onClick: toggleTheme()
+    - cursor-pointer on the row for click feedback
+  - Preserved inline gradient on avatar (design element)
+- bottom-nav.tsx: Replaced inline style colors with className approach
+  - Replaced `style={{ color: isActive ? '#FCA311' : 'rgba(255,255,255,0.35)' }}` on Icon
+    → `className={isActive ? 'text-primary' : 'text-muted-foreground/40'}` (removed style prop)
+  - Same replacement on the label span element
+  - bg-[#FCA311] → bg-primary for active indicator dot
+  - focus-visible:ring-[#FCA311]/50 → focus-visible:ring-primary/50
+
+Stage Summary:
+- All 4 component files now use only theme-aware Tailwind classes
+- Zero hardcoded dark-mode-only className colors remain
+- Inline gradient styles preserved (design intent on gold overlays/avatars)
+- Theme toggle added to profile screen with Sun/Moon icons
+- bottom-nav inline style colors converted to conditional className
+- ESLint passes cleanly

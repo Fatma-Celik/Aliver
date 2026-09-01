@@ -45,13 +45,13 @@ export default function BottomNav() {
             onClick={() => setActiveTab(tab.key)}
             aria-label={tab.label}
             aria-current={isActive ? 'page' : undefined}
-            className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full py-1 outline-none focus-visible:ring-2 focus-visible:ring-[#FCA311]/50 rounded-lg"
+            className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full py-1 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-lg"
           >
             {/* Gold dot above active icon */}
             {isActive && (
               <motion.span
                 layoutId="nav-active-dot"
-                className="absolute -top-1 w-1 h-1 rounded-full bg-[#FCA311]"
+                className="absolute -top-1 w-1 h-1 rounded-full bg-primary"
                 transition={{ type: 'spring', stiffness: 500, damping: 35 }}
               />
             )}
@@ -63,15 +63,13 @@ export default function BottomNav() {
               className="cursor-pointer"
             >
               <Icon
-                className="w-5 h-5 transition-colors duration-200"
-                style={{ color: isActive ? '#FCA311' : 'rgba(255,255,255,0.35)' }}
+                className={`w-5 h-5 transition-colors duration-200 ${isActive ? 'text-primary' : 'text-muted-foreground/40'}`}
                 strokeWidth={isActive ? 2.2 : 1.8}
               />
             </motion.div>
 
             <span
-              className="text-[10px] leading-none font-medium transition-colors duration-200"
-              style={{ color: isActive ? '#FCA311' : 'rgba(255,255,255,0.35)' }}
+              className={`text-[10px] leading-none font-medium transition-colors duration-200 ${isActive ? 'text-primary' : 'text-muted-foreground/40'}`}
             >
               {tab.label}
             </span>

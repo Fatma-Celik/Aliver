@@ -207,15 +207,21 @@ Uygulama **http://localhost:3000** adresinde çalışacaktır.
 
 ---
 
-## 📱 Expo Mobil Uygulama (Planlanan)
+## 📱 Expo Mobil Uygulama & APK İndirme
 
-ALIVER originally designed for **Expo / React Native**. Web version uses Next.js.
+Detaylı kurulum, Google Auth ve APK build rehberi → **[EXPO_GUIDE.md](./EXPO_GUIDE.md)**
+
+| Yöntem | Süre | Açıklama |
+|--------|------|----------|
+| **EAS Build** | ~10 dk | Cloud build, en kolay, indirme linki verir |
+| **Lokal Build** | ~20 dk | Android Studio ile `app-debug.apk` üretir |
+| **Expo Go** | Anında | QR okut, geliştirme sırasında test et |
 
 ```bash
-# Expo kurulumu (yakında)
-npx create-expo-app aliver-mobile
+# Hızlı APK (EAS Build)
 cd aliver-mobile
-npx expo start
+eas build --platform android --profile preview
+# ✅ İndirme linki çıkar → telefondan aç → APK yüklenir!
 ```
 
 ---
@@ -258,7 +264,7 @@ npx expo start
 
 ## 🔮 Gelecek Planları
 
-- [ ] 📱 Expo mobil uygulama
+- [ ] 📱 [Expo mobil uygulama](./EXPO_GUIDE.md) & APK build
 - [ ] 🔔 Push bildirimler (Supabase Realtime)
 - [ ] 📷 QR kod okuyucu (kamera ile)
 - [ ] 🏷️ Ürün kategorileri

@@ -2,12 +2,17 @@
 
 import { useState, type FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Chrome } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { useAppStore, type User } from '@/store/auth-store'
+import { toast } from 'sonner'
+
+function titleCase(str: string): string {
+  return str.replace(/\b\w/g, c => c.toUpperCase())
+}
 
 type AuthMode = 'login' | 'register'
 
@@ -94,7 +99,7 @@ export default function AuthScreen() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center bg-black px-4 py-8">
+    <div className="relative flex min-h-screen w-full items-center justify-center bg-background px-4 py-8">
       {/* Decorative gold glow behind card */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -124,7 +129,7 @@ export default function AuthScreen() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-sm text-white/60"
+              className="text-sm text-muted-foreground"
             >
               Aile Alışveriş Asistanınız
             </motion.p>
@@ -157,7 +162,7 @@ export default function AuthScreen() {
                       <div className="flex flex-col gap-2 pb-1">
                         <Label
                           htmlFor="name"
-                          className="text-sm font-medium text-white/80"
+                          className="text-sm font-medium text-foreground/80"
                         >
                           Adınız
                         </Label>
@@ -166,9 +171,9 @@ export default function AuthScreen() {
                           type="text"
                           placeholder="Adınızı girin"
                           value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          onChange={(e) => setName(titleCase(e.target.value))}
                           autoComplete="name"
-                          className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
+                          className="h-11 border-primary/25 bg-transparent text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
                         />
                       </div>
                     </motion.div>
@@ -179,7 +184,7 @@ export default function AuthScreen() {
                 <div className="flex flex-col gap-2">
                   <Label
                     htmlFor="email"
-                    className="text-sm font-medium text-white/80"
+                    className="text-sm font-medium text-foreground/80"
                   >
                     E-posta
                   </Label>
@@ -190,7 +195,7 @@ export default function AuthScreen() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="h-11 border-[#FCA311]/20 bg-black/40 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
+                    className="h-11 border-primary/25 bg-transparent text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
                   />
                 </div>
 
@@ -198,7 +203,7 @@ export default function AuthScreen() {
                 <div className="flex flex-col gap-2">
                   <Label
                     htmlFor="password"
-                    className="text-sm font-medium text-white/80"
+                    className="text-sm font-medium text-foreground/80"
                   >
                     Şifre
                   </Label>
@@ -214,12 +219,12 @@ export default function AuthScreen() {
                           ? 'new-password'
                           : 'current-password'
                       }
-                      className="h-11 border-[#FCA311]/20 bg-black/40 pr-11 text-white placeholder:text-white/30 focus-visible:border-[#FCA311] focus-visible:ring-[#FCA311]/30 glass-input"
+                      className="h-11 border-primary/25 bg-transparent pr-11 text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 transition-colors hover:text-white/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors hover:text-muted-foreground"
                       aria-label={
                         showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'
                       }
@@ -253,6 +258,7 @@ export default function AuthScreen() {
                   type="submit"
                   disabled={loading}
                   className="h-11 w-full rounded-full bg-gradient-to-r from-[#FCA311] to-[#e8960f] text-sm font-semibold text-black shadow-lg shadow-[#FCA311]/20 transition-all hover:from-[#f5b533] hover:to-[#FCA311] hover:shadow-[#FCA311]/30 disabled:opacity-70 hover-shine"
+                  style={{}}
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -265,13 +271,33 @@ export default function AuthScreen() {
                     'Kayıt Ol'
                   )}
                 </Button>
+
+                {/* Separator */}
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-xs text-muted-foreground">veya</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+
+                {/* Google login button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    toast.info('Google girişi Supabase bağlantısı gerektirir. Supabase projenizi ayarlayın.')
+                  }
+                  className="h-11 w-full rounded-full border-border bg-foreground text-background text-sm font-medium hover:opacity-90"
+                >
+                  <Chrome className="size-4 mr-2" />
+                  Google ile Giriş Yap
+                </Button>
               </motion.form>
             </AnimatePresence>
           </CardContent>
 
           {/* Footer – toggle mode */}
           <CardFooter className="justify-center pb-6 pt-0 hover-glow rounded-b-2xl">
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-muted-foreground">
               {mode === 'login'
                 ? 'Hesabınız yok mu?'
                 : 'Zaten hesabınız var mı?'}{' '}
