@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyPassword, generateToken } from '@/lib/auth'
-import { isSupabaseConfigured, supabaseLogin } from '@/lib/supabase-auth'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { supabaseLogin } from '@/lib/supabase-auth'
 
 export async function POST(request: NextRequest) {
   try {

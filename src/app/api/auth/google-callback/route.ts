@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAuthCallback, isSupabaseConfigured } from '@/lib/supabase-auth'
+import { isSupabaseConfigured } from '@/lib/supabase'
+import { supabaseAuthCallback } from '@/lib/supabase-auth'
 
 /**
  * Google OAuth callback
