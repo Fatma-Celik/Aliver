@@ -29,8 +29,8 @@ function FabWidget() {
     setActiveTab('list')
   }
 
-  // Hide when already on list tab with an active list
-  if (activeTab === 'list' && useAppStore.getState().activeList) return null
+  // Hide when on list tab with an active list, or on profile tab
+  if ((activeTab === 'list' && useAppStore.getState().activeList) || activeTab === 'profile') return null
 
   return (
     <motion.button
@@ -121,7 +121,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-background">
       <ThemeSync />
-      <main className="pb-28">
+      <main className="pb-24">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
             <motion.div key="home" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>

@@ -308,3 +308,39 @@ Stage Summary:
 - New branding header on home screen with logo, title, and slogan
 - All text/branding updated to 'Herkes bilir, biri alır.' across auth, layout, home
 - Old glass-nav CSS removed, FAB CSS updated for new positioning
+---
+Task ID: 8
+Agent: Main Orchestrator
+Task: Redesign bottom navigation bar with premium glass morphism and refined effects
+
+Work Log:
+- Completely rewrote bottom-nav.tsx with new design:
+  - Removed old floating pill with white circle indicator and center notch
+  - New full-width bar at bottom with 28px border-radius
+  - Added CSS classes in globals.css for theme-aware glass morphism (bottom-nav-bar, bottom-nav-indicator, bottom-nav-dot, bottom-nav-shimmer)
+  - Active tab: gold pill indicator that slides smoothly between tabs using framer-motion useMotionValue/useTransform
+  - Each tab has: icon + text label (10px font) + active dot indicator (gold gradient with glow)
+  - Active icon: gold color (#FCA311 dark / #D4890E light) with drop-shadow glow filter
+  - Inactive icon/label: muted color (rgba(136,153,170,0.45) dark / rgba(122,122,122,0.4) light)
+  - Subtle gold shimmer line on top edge of nav bar
+  - Top gradient fade behind nav for content transition
+  - Spring-based animations (stiffness: 350, damping: 30) for indicator movement
+  - Tap scale animation (0.82) on tab buttons
+- Added CSS for light/dark theme variants:
+  - Dark: navy glass background (rgba(20,33,61,0.85)), subtle white border, deep shadow
+  - Light: warm white glass background (rgba(255,255,255,0.85)), subtle dark border, soft shadow
+  - Both: 40px blur + 1.8 saturate backdrop-filter
+- Updated globals.css:
+  - Added .bottom-nav-bar, .bottom-nav-shimmer, .bottom-nav-indicator, .bottom-nav-dot classes
+  - Each with proper .dark variants
+- Updated page.tsx:
+  - Changed main content padding from pb-28 to pb-24 (tighter fit with new nav)
+  - Fixed FAB visibility: now hidden on profile tab AND when on list tab with active list
+- Updated .fab-basket bottom position from 7.5rem to 6.25rem (tighter above new nav)
+- Browser verified: VLM confirmed indicator animates correctly between tabs, icons/labels visible, glass morphism looks good
+
+Stage Summary:
+- Premium glass morphism bottom nav with gold pill indicator, text labels, and shimmer effects
+- Theme-aware (light/dark) via CSS classes
+- Smooth spring animations for all interactions
+- FAB visibility improved (hidden on profile tab)

@@ -414,7 +414,7 @@ input:-webkit-autofill:focus {
 
 .fab-basket {
   position: fixed;
-  bottom: 7.5rem;
+  bottom: 6.25rem;
   right: 1.25rem;
   z-index: 60;
   width: 56px;
@@ -428,4 +428,76 @@ input:-webkit-autofill:focus {
   background: transparent !important;
   box-shadow: none !important;
   padding: 0;
+}
+
+/* ============================================================ */
+/*  BOTTOM NAVIGATION BAR                                       */
+/* ============================================================ */
+
+.bottom-nav-bar {
+  height: 72px;
+  border-radius: 28px;
+  padding: 8px;
+}
+
+.dark .bottom-nav-bar {
+  background: linear-gradient(135deg, rgba(20, 33, 61, 0.85) 0%, rgba(13, 27, 42, 0.92) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.bottom-nav-bar {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 246, 243, 0.92) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+}
+
+.dark .bottom-nav-bar {
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+}
+
+.bottom-nav-shimmer {
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 137, 14, 0.25) 30%, rgba(212, 137, 14, 0.45) 50%, rgba(212, 137, 14, 0.25) 70%, transparent 100%);
+}
+
+.dark .bottom-nav-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(252, 163, 17, 0.3) 30%, rgba(252, 163, 17, 0.5) 50%, rgba(252, 163, 17, 0.3) 70%, transparent 100%);
+}
+
+.bottom-nav-indicator {
+  height: 56px;
+  border-radius: 20px;
+}
+
+.dark .bottom-nav-indicator {
+  background: linear-gradient(135deg, rgba(252, 163, 17, 0.15) 0%, rgba(252, 163, 17, 0.08) 100%);
+  border: 1px solid rgba(252, 163, 17, 0.2);
+  box-shadow: 0 0 20px rgba(252, 163, 17, 0.08), inset 0 0 12px rgba(252, 163, 17, 0.05);
+}
+
+.bottom-nav-indicator {
+  background: linear-gradient(135deg, rgba(212, 137, 14, 0.12) 0%, rgba(212, 137, 14, 0.06) 100%);
+  border: 1px solid rgba(212, 137, 14, 0.15);
+  box-shadow: 0 0 16px rgba(212, 137, 14, 0.06), inset 0 0 10px rgba(212, 137, 14, 0.03);
+}
+
+.bottom-nav-dot {
+  height: 3px;
+  width: 16px;
+  border-radius: 9999px;
+}
+
+.dark .bottom-nav-dot {
+  background: linear-gradient(90deg, #FCA311 0%, #FFD60A 100%);
+  box-shadow: 0 0 8px rgba(252, 163, 17, 0.5);
+}
+
+.bottom-nav-dot {
+  background: linear-gradient(90deg, #D4890E 0%, #FCA311 100%);
+  box-shadow: 0 0 8px rgba(212, 137, 14, 0.4);
 }

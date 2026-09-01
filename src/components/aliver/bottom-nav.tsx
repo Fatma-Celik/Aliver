@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useTransform, animate, AnimatePresence } from 'framer-motion'
 import { Home, Users, ShoppingCart, User } from 'lucide-react'
 import { useAppStore, type AppState } from '@/store/auth-store'
 
@@ -17,7 +17,7 @@ interface TabConfig {
 const TABS: TabConfig[] = [
   { key: 'home', label: 'Ana Sayfa', icon: Home },
   { key: 'family', label: 'Aile', icon: Users },
-  { key: 'list', label: 'Liste', icon: ShoppingCart },
+  { key: 'list', label: 'Listeler', icon: ShoppingCart },
   { key: 'profile', label: 'Profil', icon: User },
 ]
 
@@ -26,48 +26,63 @@ const TABS: TabConfig[] = [
 /* ------------------------------------------------------------------ */
 
 export default function BottomNav() {
-  const { activeTab, setActiveTab } = useAppStore()
+  const { activeTab, setActiveTab, theme } = useAppStore()
   const activeIndex = TABS.findIndex((t) => t.key === activeTab)
+  const isDark = theme === 'dark'
 
-  // Each tab center is at (index * 25 + 12.5)%
-  const indicatorLeft = `${activeIndex * 25 + 12.5}%`
+  // Motion value for smooth indicator animation
+  const indicatorX = useMotionValue(0)
+
+  // Calculate indicator position based on tab index
+  const tabWidth = 25 // each tab is 25% width
+  const centerOffset = tabWidth / 2
+  const targetX = activeIndex * tabWidth + centerOffset
+
+  // Animate the indicator
+  animate(indicatorX, targetX, {
+    type: 'spring',
+    stiffness: 350,
+    damping: 30,
+  })
+
+  const translateX = useTransform(indicatorX, (v) => `${v}%`)
+
+  const primaryColor = isDark ? '#FCA311' : '#D4890E'
+  const inactiveColor = isDark ? 'rgba(136, 153, 170, 0.45)' : 'rgba(122, 122, 122, 0.4)'
+  const glowFilter = isDark ? 'drop-shadow(0 0 6px rgba(252, 163, 17, 0.4))' : 'drop-shadow(0 0 4px rgba(212, 137, 14, 0.35))'
 
   return (
     <nav
       role="navigation"
       aria-label="Ana navigasyon"
-      className="fixed bottom-4 left-4 right-4 z-50"
+      className="fixed bottom-0 left-0 right-0 z-50"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="relative h-16 rounded-2xl bg-card dark:bg-black shadow-xl dark:shadow-black/40 shadow-black/10">
-        {/* Semicircular notch at top center */}
-        <div className="absolute -top-[18px] left-1/2 -translate-x-1/2 w-10 h-[18px] overflow-hidden">
-          <div className="w-full h-full rounded-b-full bg-background" />
-        </div>
+      {/* Top gradient fade - content behind nav */}
+      <div
+        className="absolute -top-10 left-0 right-0 h-10 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to top, var(--background) 0%, transparent 100%)',
+        }}
+      />
 
-        {/* Animated active indicator */}
-        <motion.div
-          className="absolute -top-[14px] z-10 pointer-events-none"
-          animate={{ left: indicatorLeft }}
-          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-          style={{ x: '-50%' }}
-        >
-          <div className="w-12 h-12 rounded-full bg-foreground dark:bg-white flex items-center justify-center shadow-lg dark:shadow-black/30 shadow-black/15">
-            {TABS.filter((t) => t.key === activeTab).map((tab) => {
-              const Icon = tab.icon
-              return (
-                <Icon
-                  key={tab.key}
-                  className="w-5 h-5 text-primary"
-                  strokeWidth={2.2}
-                />
-              )
-            })}
-          </div>
-        </motion.div>
+      <div className="relative mx-3 mb-3">
+        {/* Main nav container */}
+        <div className="bottom-nav-bar relative flex items-center justify-around">
+          {/* Subtle gold shimmer line on top */}
+          <div className="bottom-nav-shimmer absolute top-0 left-[10%] right-[10%] pointer-events-none" />
 
-        {/* Tab icon buttons */}
-        <div className="relative z-0 flex items-center justify-around h-full px-4">
+          {/* Animated active indicator (pill) */}
+          <motion.div
+            className="bottom-nav-indicator absolute top-2 pointer-events-none z-0"
+            style={{
+              x: translateX,
+              marginLeft: '-22px',
+              width: '44px',
+            }}
+          />
+
+          {/* Tab buttons */}
           {TABS.map((tab, index) => {
             const Icon = tab.icon
             const isActive = index === activeIndex
@@ -78,23 +93,60 @@ export default function BottomNav() {
                 onClick={() => setActiveTab(tab.key)}
                 aria-label={tab.label}
                 aria-current={isActive ? 'page' : undefined}
-                className="flex-1 h-full flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-lg"
+                className="relative z-10 flex flex-1 flex-col items-center justify-center gap-1.5 h-full outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-2xl"
               >
+                {/* Icon */}
                 <motion.div
-                  whileTap={{ scale: 0.8 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                  onClick={(e) => { e.stopPropagation(); setActiveTab(tab.key) }}
-                  className="cursor-pointer"
+                  whileTap={{ scale: 0.82 }}
+                  transition={{ type: 'spring', stiffness: 450, damping: 20 }}
                 >
-                  <Icon
-                    className={`w-[18px] h-[18px] transition-all duration-200 ${
-                      isActive
-                        ? 'opacity-0'
-                        : 'text-muted-foreground/50 dark:text-white/40'
-                    }`}
-                    strokeWidth={1.8}
-                  />
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${tab.key}-${isActive}`}
+                      initial={isActive ? { scale: 0.5, opacity: 0.3 } : { scale: 1, opacity: 1 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    >
+                      <Icon
+                        strokeWidth={isActive ? 2.2 : 1.6}
+                        style={{
+                          width: isActive ? '22px' : '20px',
+                          height: isActive ? '22px' : '20px',
+                          color: isActive ? primaryColor : inactiveColor,
+                          filter: isActive ? glowFilter : 'none',
+                          transition: 'color 0.3s ease, filter 0.3s ease',
+                        }}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                 </motion.div>
+
+                {/* Label */}
+                <motion.span
+                  animate={{
+                    opacity: isActive ? 1 : 0.45,
+                    y: isActive ? 0 : 2,
+                  }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="text-[10px] leading-none font-medium select-none"
+                  style={{
+                    color: isActive ? primaryColor : inactiveColor,
+                    transition: 'color 0.3s ease',
+                  }}
+                >
+                  {tab.label}
+                </motion.span>
+
+                {/* Active dot indicator */}
+                <motion.div
+                  animate={{
+                    scaleX: isActive ? 1 : 0,
+                    opacity: isActive ? 1 : 0,
+                  }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="bottom-nav-dot absolute -bottom-0.5 left-1/2 -translate-x-1/2"
+                  style={{ transformOrigin: 'center' }}
+                />
               </button>
             )
           })}
