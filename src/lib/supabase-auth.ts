@@ -9,15 +9,21 @@ export type AuthUser = {
   avatar: string | null
 }
 
+export type AuthResult =
+  | { token: string; user: AuthUser }
+  | { needsConfirmation: true; email: string }
+  | { error: string }
+
 /**
  * Supabase ile e-posta/şifre kaydı.
- * Aynı zamanda lokal veritabanına da kullanıcıyı kaydeder (sync).
+ * Email doğrulama aktifse → needsConfirmation döner.
+ * Email doğrulama kapalıysa → token + user döner.
  */
 export async function supabaseRegister(
   name: string,
   email: string,
   password: string,
-) {
+): Promise<AuthResult> {
   if (!isSupabaseConfigured()) {
     return { error: 'Supabase bağlantısı henüz ayarlanmadı' }
   }
@@ -27,13 +33,14 @@ export async function supabaseRegister(
     password,
     options: {
       data: { name },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/auth/email-confirmation`,
     },
   })
 
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Kayıt başarısız' }
 
-  // Lokal DB'ye de kaydet (offline fallback)
+  // Lokal DB'ye kaydet (offline fallback)
   await db.user.upsert({
     where: { email },
     create: {
@@ -44,6 +51,11 @@ export async function supabaseRegister(
     },
     update: { name },
   })
+
+  // Email doğrulama gerekiyorsa (Supabase'te aktifse) session gelmez
+  if (!data.session) {
+    return { needsConfirmation: true, email }
+  }
 
   const token = generateToken(data.user.id)
   const user: AuthUser = {
@@ -58,8 +70,9 @@ export async function supabaseRegister(
 
 /**
  * Supabase ile e-posta/şifre girişi.
+ * Email doğrulanmamışsa hata döner.
  */
-export async function supabaseLogin(email: string, password: string) {
+export async function supabaseLogin(email: string, password: string): Promise<AuthResult> {
   if (!isSupabaseConfigured()) {
     return { error: 'Supabase bağlantısı henüz ayarlanmadı' }
   }
@@ -69,7 +82,13 @@ export async function supabaseLogin(email: string, password: string) {
     password,
   })
 
-  if (error) return { error: error.message }
+  if (error) {
+    // Email doğrulanmamış özel hatası
+    if (error.message.includes('Email not confirmed')) {
+      return { needsConfirmation: true, email }
+    }
+    return { error: error.message }
+  }
   if (!data.user) return { error: 'Giriş başarısız' }
 
   const token = generateToken(data.user.id)
@@ -84,8 +103,63 @@ export async function supabaseLogin(email: string, password: string) {
 }
 
 /**
+ * Email doğrulama callback – email linkine tıklayınca çağrılır.
+ */
+export async function supabaseEmailConfirmation(token_hash: string): Promise<AuthResult> {
+  if (!isSupabaseConfigured()) {
+    return { error: 'Supabase bağlantısı henüz ayarlanmadı' }
+  }
+
+  const admin = createAdminClient()
+  const { data, error } = await admin.auth.verifyOtp({
+    token_hash,
+    type: 'email',
+  })
+
+  if (error) return { error: error.message }
+  if (!data.user) return { error: 'Doğrulama başarısız' }
+
+  // Lokal DB'yi güncelle
+  await db.user.upsert({
+    where: { email: data.user.email ?? '' },
+    create: {
+      id: data.user.id,
+      name: data.user.user_metadata?.name ?? 'Kullanıcı',
+      email: data.user.email ?? '',
+      password: 'supabase',
+    },
+    update: { name: data.user.user_metadata?.name },
+  })
+
+  const authToken = generateToken(data.user.id)
+  const user: AuthUser = {
+    id: data.user.id,
+    name: data.user.user_metadata?.name ?? 'Kullanıcı',
+    email: data.user.email ?? '',
+    avatar: null,
+  }
+
+  return { token: authToken, user }
+}
+
+/**
+ * Şifre sıfırlama e-postası gönder
+ */
+export async function supabaseResetPassword(email: string) {
+  if (!isSupabaseConfigured()) {
+    return { error: 'Supabase bağlantısı henüz ayarlanmadı' }
+  }
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/auth/reset-password`,
+  })
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
+/**
  * Google OAuth ile giriş – auth callback'te kullanılır.
- * Bu fonksiyon redirect URL'i döndürür.
  */
 export function getGoogleAuthUrl() {
   if (!isSupabaseConfigured()) {

@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
       if (result.error) {
         return NextResponse.json({ error: result.error }, { status: 401 })
       }
-      return NextResponse.json(result)
+      if ('needsConfirmation' in result) {
+        return NextResponse.json({ needsConfirmation: true, email: result.email }, { status: 403 })
+      }
+      return NextResponse.json(result as { token: string; user: object })
     }
 
     // ── Local mod (SQLite) ──

@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Eye, EyeOff, Chrome } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Chrome, MailCheck, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -45,6 +45,7 @@ export default function AuthScreen() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [confirmationEmail, setConfirmationEmail] = useState('')
 
   const { t } = useTranslation()
   const setAuth = useAppStore((s) => s.setAuth)
@@ -57,6 +58,7 @@ export default function AuthScreen() {
     setEmail('')
     setPassword('')
     setShowPassword(false)
+    setConfirmationEmail('')
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -96,12 +98,78 @@ export default function AuthScreen() {
       }
 
       const data = await res.json()
+
+      // Email doğrulama gerekiyorsa
+      if (data.needsConfirmation) {
+        setConfirmationEmail(data.email || email)
+        toast.success(`${data.email || email} adresine doğrulama e-postası gönderildi`)
+        return
+      }
+
       setAuth(data.token, data.user as User)
     } catch (err) {
       setError(err instanceof Error ? err.message : t['auth.error.generic'])
     } finally {
       setLoading(false)
     }
+  }
+
+  // Email doğrulama bekleniyor ekranı
+  if (confirmationEmail) {
+    return (
+      <div className="relative flex min-h-screen w-full items-center justify-center bg-background px-4 py-8">
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          aria-hidden="true"
+        >
+          <div className="h-[500px] w-[500px] rounded-full bg-[#FCA311]/10 blur-[120px]" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, type: 'spring', stiffness: 300, damping: 20 }}
+          className="relative z-10 w-full max-w-sm"
+        >
+          <Card className="glass-card shadow-2xl">
+            <CardHeader className="flex flex-col items-center gap-4 pb-2 pt-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 400, damping: 15 }}
+                className="flex size-20 items-center justify-center rounded-2xl"
+                style={{ background: 'linear-gradient(145deg, #FCA311 0%, #E8920A 100%)' }}
+              >
+                <MailCheck className="size-10 text-black" strokeWidth={2} />
+              </motion.div>
+              <h2 className="text-xl font-bold text-foreground">
+                E-posta Gönderildi
+              </h2>
+            </CardHeader>
+
+            <CardContent className="flex flex-col items-center gap-3 px-6 pb-6">
+              <p className="text-center text-sm leading-relaxed text-muted-foreground">
+                <span className="font-medium text-foreground">{confirmationEmail}</span> adresine doğrulama bağlantısı gönderdik. E-postanızı kontrol edip bağlantıya tıklayın.
+              </p>
+              <p className="text-center text-xs text-muted-foreground/50">
+                Spam klasörünü de kontrol etmeyi unutmayın.
+              </p>
+            </CardContent>
+
+            <CardFooter className="justify-center pb-6 pt-0">
+              <button
+                type="button"
+                onClick={() => setConfirmationEmail('')}
+                className="flex items-center gap-2 text-sm font-medium text-[#FCA311] transition-colors hover:text-[#f5b533]"
+              >
+                <ArrowLeft className="size-4" />
+                Girişe Dön
+              </button>
+            </CardFooter>
+          </Card>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
