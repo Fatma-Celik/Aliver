@@ -47,10 +47,18 @@ export interface ShoppingList {
   items?: ShoppingItem[]
 }
 
+export interface NotificationSettings {
+  listUpdates: boolean
+  newItems: boolean
+  purchaseAlerts: boolean
+  familyActivity: boolean
+}
+
 export interface AppState {
   token: string | null
   user: User | null
   setAuth: (token: string, user: User) => void
+  updateUser: (user: Partial<User>) => void
   logout: () => void
   family: Family | null
   setFamily: (family: Family | null) => void
@@ -65,6 +73,8 @@ export interface AppState {
   theme: 'dark' | 'light'
   setTheme: (theme: 'dark' | 'light') => void
   toggleTheme: () => void
+  notifications: NotificationSettings
+  setNotifications: (settings: Partial<NotificationSettings>) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -73,6 +83,7 @@ export const useAppStore = create<AppState>()(
       token: null,
       user: null,
       setAuth: (token, user) => set({ token, user }),
+      updateUser: (updates) => set((s) => ({ user: s.user ? { ...s.user, ...updates } : null })),
       logout: () => set({ token: null, user: null, family: null, lists: [], activeList: null }),
       family: null,
       setFamily: (family) => set({ family }),
@@ -87,6 +98,14 @@ export const useAppStore = create<AppState>()(
       theme: 'dark',
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
+      notifications: {
+        listUpdates: true,
+        newItems: true,
+        purchaseAlerts: true,
+        familyActivity: false,
+      },
+      setNotifications: (settings) =>
+        set((s) => ({ notifications: { ...s.notifications, ...settings } })),
     }),
     {
       name: 'aliver-storage',
@@ -95,6 +114,7 @@ export const useAppStore = create<AppState>()(
         user: state.user,
         activeTab: state.activeTab,
         theme: state.theme,
+        notifications: state.notifications,
       }),
     }
   )

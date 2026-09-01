@@ -227,3 +227,38 @@ Stage Summary:
 - Theme toggle added to profile screen with Sun/Moon icons
 - bottom-nav inline style colors converted to conditional className
 - ESLint passes cleanly
+
+---
+Task ID: 6
+Agent: Main Orchestrator
+Task: Profil guncelleme, avatar yukleme, tema toggle, bildirimler sekmesi
+
+Work Log:
+- Created /api/auth/profile/route.ts: PATCH endpoint for name and email update with validation (name 2-50 chars, email regex, unique check)
+- Created /api/auth/avatar/route.ts: POST endpoint for avatar upload (FormData, file type validation, 2MB max, unique filename in /public/avatars/) and DELETE to remove avatar
+- Added PATCH handler to /api/lists/[id]/route.ts for list rename
+- Updated auth-store.ts: Added NotificationSettings interface (listUpdates, newItems, purchaseAlerts, familyActivity), notifications state, setNotifications action, updateUser action
+- Completely rebuilt profile-screen.tsx with:
+  - Clickable avatar with camera overlay and upload spinner (uses Avatar component from shadcn/ui)
+  - Remove avatar button (when avatar exists) with AlertDialog confirmation
+  - Profile name display with pencil edit button
+  - Email display with Mail icon
+  - Edit Profile Dialog: name and email fields with titleCase on name, save/cancel buttons
+  - GORUNUM section: Theme toggle with animated Sun/Moon icon and Switch component
+  - BILDIRIMLER section: 4 toggle switches (Liste Guncellemeleri, Yeni Urun Eklendi, Alim Bildirimleri, Aile Aktiviteleri)
+  - HESAP section: Dil Secimi
+  - Logout button with AlertDialog confirmation
+  - Section titles with icon + uppercase label
+  - Version info footer
+- Added Pencil icon and edit dialog to list-screen.tsx ListSelectionView (per-list rename via PATCH /api/lists/[id])
+- Fixed titleCase Turkish locale bug: replaced `\b\w` regex with `.split(/\s+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')` in all 3 files (auth-screen, list-screen, profile-screen)
+
+Stage Summary:
+- Profile update API (name + email) working and verified in browser
+- Avatar upload API (POST) and remove API (DELETE) created
+- Profile screen has 4 distinct sections: Gorunum, Bildirimler, Hesap, plus avatar + stats
+- Theme toggle with proper Switch UI component and animated icon
+- 4 notification toggles persisted to localStorage via Zustand
+- List edit (rename) functionality added with pencil icon + dialog
+- Turkish titleCase bug fixed (KullaniciCi → Kullanici)
+- All changes pass ESLint and browser verification

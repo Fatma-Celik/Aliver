@@ -1,0 +1,968 @@
+     1→'use client'
+     2→
+     3→import { useEffect, useState, useCallback, useRef } from 'react'
+     4→import { motion, AnimatePresence } from 'framer-motion'
+     5→import {
+     6→  ArrowLeft,
+     7→  Plus,
+     8→  ShoppingCart,
+     9→  Trash2,
+    10→  Check,
+    11→  Package,
+    12→  ShoppingBag,
+    13→  Loader2,
+    14→  Sparkles,
+    15→  Search,
+    16→  CheckCircle,
+    17→  AlertCircle,
+    18→} from 'lucide-react'
+    19→import { toast } from 'sonner'
+    20→import { Button } from '@/components/ui/button'
+    21→import { Input } from '@/components/ui/input'
+    22→import { Checkbox } from '@/components/ui/checkbox'
+    23→import { Badge } from '@/components/ui/badge'
+    24→import { Separator } from '@/components/ui/separator'
+    25→import {
+    26→  Dialog,
+    27→  DialogContent,
+    28→  DialogHeader,
+    29→  DialogTitle,
+    30→  DialogDescription,
+    31→  DialogFooter,
+    32→  DialogClose,
+    33→} from '@/components/ui/dialog'
+    34→import {
+    35→  Select,
+    36→  SelectContent,
+    37→  SelectItem,
+    38→  SelectTrigger,
+    39→  SelectValue,
+    40→} from '@/components/ui/select'
+    41→import { useAppStore, type ShoppingList, type ShoppingItem } from '@/store/auth-store'
+    42→
+    43→/* ------------------------------------------------------------------ */
+    44→/*  Utilities                                                          */
+    45→/* ------------------------------------------------------------------ */
+    46→
+    47→function titleCase(str: string): string {
+    48→  return str.replace(/\b\w/g, c => c.toUpperCase())
+    49→}
+    50→
+    51→/* ------------------------------------------------------------------ */
+    52→/*  Constants                                                          */
+    53→/* ------------------------------------------------------------------ */
+    54→
+    55→const UNITS = ['adet', 'kg', 'litre', 'paket'] as const
+    56→
+    57→/* ------------------------------------------------------------------ */
+    58→/*  Animation variants                                                 */
+    59→/* ------------------------------------------------------------------ */
+    60→
+    61→const containerVariants = {
+    62→  hidden: { opacity: 0 },
+    63→  visible: {
+    64→    opacity: 1,
+    65→    transition: {
+    66→      staggerChildren: 0.07,
+    67→      delayChildren: 0.1,
+    68→    },
+    69→  },
+    70→}
+    71→
+    72→const itemVariants = {
+    73→  hidden: { opacity: 0, y: 16 },
+    74→  visible: {
+    75→    opacity: 1,
+    76→    y: 0,
+    77→    transition: { duration: 0.35, ease: 'easeOut' },
+    78→  },
+    79→  exit: {
+    80→    opacity: 0,
+    81→    x: -40,
+    82→    transition: { duration: 0.25 },
+    83→  },
+    84→}
+    85→
+    86→const slideInVariants = {
+    87→  hidden: { opacity: 0, x: -20, height: 0 },
+    88→  visible: {
+    89→    opacity: 1,
+    90→    x: 0,
+    91→    height: 'auto',
+    92→    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+    93→  },
+    94→}
+    95→
+    96→const cardHover = {
+    97→  scale: 1.02,
+    98→  transition: { type: 'spring', stiffness: 400, damping: 25 },
+    99→}
+   100→
+   101→/* ------------------------------------------------------------------ */
+   102→/*  Helper: Auth headers                                               */
+   103→/* ------------------------------------------------------------------ */
+   104→
+   105→function authHeaders(token: string) {
+   106→  return { Authorization: `Bearer ${token}` }
+   107→}
+   108→
+   109→/* ------------------------------------------------------------------ */
+   110→/*  View A: List Selection                                             */
+   111→/* ------------------------------------------------------------------ */
+   112→
+   113→function ListSelectionView() {
+   114→  const { token, lists, setLists, setActiveList } = useAppStore()
+   115→  const [loading, setLoading] = useState(true)
+   116→  const [dialogOpen, setDialogOpen] = useState(false)
+   117→  const [newListName, setNewListName] = useState('')
+   118→  const [creating, setCreating] = useState(false)
+   119→  const [deletingListId, setDeletingListId] = useState<string | null>(null)
+   120→  const [checkingAllListId, setCheckingAllListId] = useState<string | null>(null)
+   121→
+   122→  const fetchLists = useCallback(async () => {
+   123→    if (!token) return
+   124→    setLoading(true)
+   125→    try {
+   126→      const res = await fetch('/api/lists', { headers: authHeaders(token) })
+   127→      if (res.ok) {
+   128→        const data = await res.json()
+   129→        const mapped: ShoppingList[] = (data.lists ?? []).map(
+   130→          (l: {
+   131→            id: string
+   132→            name: string
+   133→            createdBy: string
+   134→            familyId?: string
+   135→            createdAt: string
+   136→            totalCount: number
+   137→            completedCount: number
+   138→          }) => ({
+   139→            id: l.id,
+   140→            name: l.name,
+   141→            createdBy: l.createdBy,
+   142→            familyId: l.familyId ?? '',
+   143→            createdAt: l.createdAt,
+   144→            _count: { items: l.totalCount, completed: l.completedCount },
+   145→          }),
+   146→        )
+   147→        setLists(mapped)
+   148→      }
+   149→    } catch {
+   150→      // silent
+   151→    } finally {
+   152→      setLoading(false)
+   153→    }
+   154→  }, [token, setLists])
+   155→
+   156→  useEffect(() => {
+   157→    fetchLists()
+   158→  }, [fetchLists])
+   159→
+   160→  const handleCreate = async () => {
+   161→    if (!token || !newListName.trim()) return
+   162→    setCreating(true)
+   163→    try {
+   164→      const res = await fetch('/api/lists', {
+   165→        method: 'POST',
+   166→        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+   167→        body: JSON.stringify({ name: newListName.trim() }),
+   168→      })
+   169→      if (res.ok) {
+   170→        toast.success('Liste oluşturuldu!')
+   171→        setNewListName('')
+   172→        setDialogOpen(false)
+   173→        fetchLists()
+   174→      } else {
+   175→        toast.error('Liste oluşturulamadı')
+   176→      }
+   177→    } catch {
+   178→      toast.error('Bağlantı hatası')
+   179→    } finally {
+   180→      setCreating(false)
+   181→    }
+   182→  }
+   183→
+   184→  const handleDeleteList = async (listId: string, e: React.MouseEvent) => {
+   185→    e.stopPropagation()
+   186→    if (!token) return
+   187→    setDeletingListId(listId)
+   188→    try {
+   189→      const res = await fetch(`/api/lists/${listId}`, {
+   190→        method: 'DELETE',
+   191→        headers: authHeaders(token),
+   192→      })
+   193→      if (res.ok) {
+   194→        toast.success('Liste silindi')
+   195→        fetchLists()
+   196→      } else {
+   197→        toast.error('Liste silinemedi')
+   198→      }
+   199→    } catch {
+   200→      toast.error('Bağlantı hatası')
+   201→    } finally {
+   202→      setDeletingListId(null)
+   203→    }
+   204→  }
+   205→
+   206→  const handleCheckAll = async (list: ShoppingList, e: React.MouseEvent) => {
+   207→    e.stopPropagation()
+   208→    if (!token) return
+   209→    const total = list._count?.items ?? 0
+   210→    const completed = list._count?.completed ?? 0
+   211→    if (total === 0 || total === completed) return
+   212→
+   213→    setCheckingAllListId(list.id)
+   214→    try {
+   215→      // Fetch all items for the list
+   216→      const itemsRes = await fetch(`/api/lists/items?listId=${list.id}`, {
+   217→        headers: authHeaders(token),
+   218→      })
+   219→      if (!itemsRes.ok) {
+   220→        toast.error('Ürünler yüklenemedi')
+   221→        return
+   222→      }
+   223→      const itemsData = await itemsRes.json()
+   224→      const incompleteItems = (itemsData.items ?? []).filter((i: ShoppingItem) => !i.completed)
+   225→
+   226→      // Toggle each incomplete item
+   227→      for (const item of incompleteItems) {
+   228→        await fetch('/api/lists/items', {
+   229→          method: 'PATCH',
+   230→          headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+   231→          body: JSON.stringify({ itemId: item.id }),
+   232→        })
+   233→      }
+   234→
+   235→      toast.success('Tüm ürünler tamamlandı olarak işaretlendi')
+   236→      fetchLists()
+   237→    } catch {
+   238→      toast.error('Bağlantı hatası')
+   239→    } finally {
+   240→      setCheckingAllListId(null)
+   241→    }
+   242→  }
+   243→
+   244→  const handleOpenList = (list: ShoppingList) => {
+   245→    setActiveList(list)
+   246→  }
+   247→
+   248→  if (loading) {
+   249→    return (
+   250→      <div className="flex min-h-screen items-center justify-center bg-background">
+   251→        <Loader2 className="size-8 animate-spin text-primary" />
+   252→      </div>
+   253→    )
+   254→  }
+   255→
+   256→  return (
+   257→    <main className="mx-auto min-h-screen w-full max-w-lg bg-background px-4 pb-24 pt-6">
+   258→      <motion.div
+   259→        variants={containerVariants}
+   260→        initial="hidden"
+   261→        animate="visible"
+   262→        className="flex flex-col gap-6"
+   263→      >
+   264→        {/* ─── Header ─── */}
+   265→        <motion.section variants={itemVariants} className="flex items-center justify-between">
+   266→          <div className="flex items-center gap-3">
+   267→            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15">
+   268→              <ShoppingBag className="size-5 text-primary" />
+   269→            </div>
+   270→            <h1 className="text-2xl font-bold text-primary">Alışveriş Listeleri</h1>
+   271→          </div>
+   272→          <Button
+   273→            onClick={() => setDialogOpen(true)}
+   274→            className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+   275→            size="icon"
+   276→          >
+   277→            <Plus className="size-5" />
+   278→          </Button>
+   279→        </motion.section>
+   280→
+   281→        {/* ─── Lists ─── */}
+   282→        {lists.length === 0 ? (
+   283→          <motion.div
+   284→            initial={{ opacity: 0, scale: 0.95 }}
+   285→            animate={{ opacity: 1, scale: 1 }}
+   286→            transition={{ duration: 0.4, delay: 0.2 }}
+   287→            className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-16"
+   288→          >
+   289→            <div className="flex size-16 items-center justify-center rounded-full bg-primary/5">
+   290→              <ShoppingCart className="size-8 text-muted-foreground/30" />
+   291→            </div>
+   292→            <div className="flex flex-col items-center gap-1.5">
+   293→              <p className="text-sm font-medium text-muted-foreground">
+   294→                Henüz liste oluşturulmadı
+   295→              </p>
+   296→              <p className="text-xs text-muted-foreground/50">
+   297→                Yeni bir alışveriş listesi oluşturmak için + butonuna tıklayın
+   298→              </p>
+   299→            </div>
+   300→          </motion.div>
+   301→        ) : (
+   302→          <motion.div variants={containerVariants} className="flex flex-col gap-3">
+   303→            {lists.map((list) => {
+   304→              const total = list._count?.items ?? 0
+   305→              const completed = list._count?.completed ?? 0
+   306→              const progress = total > 0 ? (completed / total) * 100 : 0
+   307→              const isComplete = total > 0 && completed === total
+   308→
+   309→              return (
+   310→                <motion.div
+   311→                  key={list.id}
+   312→                  variants={itemVariants}
+   313→                  whileHover={cardHover}
+   314→                  whileTap={{ scale: 0.98 }}
+   315→                  onClick={() => handleOpenList(list)}
+   316→                  className="glass-card hover-glow cursor-pointer rounded-2xl p-4"
+   317→                >
+   318→                  <div className="flex items-start justify-between gap-3">
+   319→                    <div className="flex items-start gap-3">
+   320→                      <div
+   321→                        className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${isComplete ? 'bg-green-500/15' : 'bg-primary/15'}`}
+   322→                      >
+   323→                        {isComplete ? (
+   324→                          <Check className="size-5 text-green-500" />
+   325→                        ) : (
+   326→                          <Package className="size-5 text-primary" />
+   327→                        )}
+   328→                      </div>
+   329→                      <div className="flex flex-col gap-1">
+   330→                        <h3 className="text-sm font-semibold text-foreground">
+   331→                          {list.name}
+   332→                        </h3>
+   333→                        <p className="text-xs text-muted-foreground">
+   334→                          <span className="font-medium text-primary">
+   335→                            {completed}
+   336→                          </span>{' '}
+   337→                          / {total} tamamlandı
+   338→                        </p>
+   339→                      </div>
+   340→                    </div>
+   341→                    <div className="flex shrink-0 items-center gap-1">
+   342→                      {!isComplete && total > 0 && (
+   343→                        <Button
+   344→                          variant="ghost"
+   345→                          size="icon"
+   346→                          className="size-7 text-amber-500/70 hover:bg-amber-500/10 hover:text-amber-500"
+   347→                          onClick={(e) => handleCheckAll(list, e)}
+   348→                          disabled={checkingAllListId === list.id}
+   349→                        >
+   350→                          {checkingAllListId === list.id ? (
+   351→                            <Loader2 className="size-3.5 animate-spin" />
+   352→                          ) : (
+   353→                            <CheckCircle className="size-3.5" />
+   354→                          )}
+   355→                        </Button>
+   356→                      )}
+   357→                      <Button
+   358→                        variant="ghost"
+   359→                        size="icon"
+   360→                        className="size-7 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+   361→                        onClick={(e) => handleDeleteList(list.id, e)}
+   362→                        disabled={deletingListId === list.id}
+   363→                      >
+   364→                        {deletingListId === list.id ? (
+   365→                          <Loader2 className="size-3.5 animate-spin" />
+   366→                        ) : (
+   367→                          <Trash2 className="size-3.5" />
+   368→                        )}
+   369→                      </Button>
+   370→                      {isComplete && (
+   371→                        <Badge
+   372→                          className="shrink-0 bg-green-500/15 text-xs text-green-500 hover:bg-green-500/20"
+   373→                        >
+   374→                          <Check className="size-3 mr-1" />
+   375→                          Tamamlandı
+   376→                        </Badge>
+   377→                      )}
+   378→                    </div>
+   379→                  </div>
+   380→
+   381→                  {/* Progress bar */}
+   382→                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-border">
+   383→                    <motion.div
+   384→                      className="h-full rounded-full"
+   385→                      style={{
+   386→                        background: isComplete
+   387→                          ? 'linear-gradient(90deg, #22C55E 0%, #4ADE80 100%)'
+   388→                          : 'linear-gradient(90deg, hsl(var(--primary)) 0%, #FFD60A 100%)',
+   389→                      }}
+   390→                      initial={{ width: 0 }}
+   391→                      animate={{ width: `${progress}%` }}
+   392→                      transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+   393→                    />
+   394→                  </div>
+   395→                </motion.div>
+   396→              )
+   397→            })}
+   398→          </motion.div>
+   399→        )}
+   400→      </motion.div>
+   401→
+   402→      {/* ─── Create List Dialog ─── */}
+   403→      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+   404→        <DialogContent className="rounded-2xl border-border bg-background sm:max-w-md">
+   405→          <DialogHeader>
+   406→            <DialogTitle className="text-foreground">Yeni Liste Oluştur</DialogTitle>
+   407→            <DialogDescription className="text-muted-foreground">
+   408→              Alışveriş listenize bir isim verin
+   409→            </DialogDescription>
+   410→          </DialogHeader>
+   411→          <div className="flex flex-col gap-4 py-2">
+   412→            <Input
+   413→              value={newListName}
+   414→              onChange={(e) => setNewListName(titleCase(e.target.value))}
+   415→              onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+   416→              placeholder="Örn: Haftalık market alışverişi"
+   417→              className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
+   418→              autoFocus
+   419→            />
+   420→          </div>
+   421→          <DialogFooter className="flex-row gap-2">
+   422→            <DialogClose asChild>
+   423→              <Button
+   424→                variant="ghost"
+   425→                className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+   426→              >
+   427→                İptal
+   428→              </Button>
+   429→            </DialogClose>
+   430→            <Button
+   431→              onClick={handleCreate}
+   432→              disabled={!newListName.trim() || creating}
+   433→              className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+   434→            >
+   435→              {creating && <Loader2 className="mr-2 size-4 animate-spin" />}
+   436→              Oluştur
+   437→            </Button>
+   438→          </DialogFooter>
+   439→        </DialogContent>
+   440→      </Dialog>
+   441→    </main>
+   442→  )
+   443→}
+   444→
+   445→/* ------------------------------------------------------------------ */
+   446→/*  View B: Items View                                                 */
+   447→/* ------------------------------------------------------------------ */
+   448→
+   449→function ItemsView() {
+   450→  const { token, activeList, setActiveList, setLists, lists } = useAppStore()
+   451→  const [items, setItems] = useState<ShoppingItem[]>([])
+   452→  const [loading, setLoading] = useState(true)
+   453→  const [addItemOpen, setAddItemOpen] = useState(false)
+   454→  const [itemName, setItemName] = useState('')
+   455→  const [itemQty, setItemQty] = useState('1')
+   456→  const [itemUnit, setItemUnit] = useState('adet')
+   457→  const [adding, setAdding] = useState(false)
+   458→  const [togglingId, setTogglingId] = useState<string | null>(null)
+   459→  const [deletingId, setDeletingId] = useState<string | null>(null)
+   460→  const [searchQuery, setSearchQuery] = useState('')
+   461→  const inputRef = useRef<HTMLInputElement>(null)
+   462→
+   463→  /* ---------- Fetch items ---------- */
+   464→  const fetchItems = useCallback(async () => {
+   465→    if (!token || !activeList) return
+   466→    setLoading(true)
+   467→    try {
+   468→      const res = await fetch(
+   469→        `/api/lists/items?listId=${activeList.id}`,
+   470→        { headers: authHeaders(token) },
+   471→      )
+   472→      if (res.ok) {
+   473→        const data = await res.json()
+   474→        setItems(data.items ?? [])
+   475→      }
+   476→    } catch {
+   477→      // silent
+   478→    } finally {
+   479→      setLoading(false)
+   480→    }
+   481→  }, [token, activeList])
+   482→
+   483→  useEffect(() => {
+   484→    fetchItems()
+   485→  }, [fetchItems])
+   486→
+   487→  /* ---------- Computed ---------- */
+   488→  const filteredItems = (activeList?.items ?? items).filter(item =>
+   489→    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+   490→  )
+   491→  const totalItems = items.length
+   492→  const completedCount = items.filter((i) => i.completed).length
+   493→  const progress = totalItems > 0 ? (completedCount / totalItems) * 100 : 0
+   494→  const allCompleted = totalItems > 0 && completedCount === totalItems
+   495→
+   496→  const sortedItems = [...filteredItems].sort((a, b) => {
+   497→    if (a.completed !== b.completed) return a.completed ? 1 : -1
+   498→    return 0
+   499→  })
+   500→
+   501→  /* ---------- Handlers ---------- */
+   502→  const handleBack = () => {
+   503→    setActiveList(null)
+   504→  }
+   505→
+   506→  const handleAddItem = async () => {
+   507→    if (!token || !activeList || !itemName.trim()) return
+   508→    setAdding(true)
+   509→    try {
+   510→      const res = await fetch('/api/lists/items', {
+   511→        method: 'POST',
+   512→        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+   513→        body: JSON.stringify({
+   514→          listId: activeList.id,
+   515→          name: itemName.trim(),
+   516→          quantity: Number(itemQty) || 1,
+   517→          unit: itemUnit,
+   518→        }),
+   519→      })
+   520→      if (res.ok) {
+   521→        toast.success('Ürün eklendi')
+   522→        setItemName('')
+   523→        setItemQty('1')
+   524→        setItemUnit('adet')
+   525→        setAddItemOpen(false)
+   526→        fetchItems()
+   527→      } else {
+   528→        toast.error('Ürün eklenemedi')
+   529→      }
+   530→    } catch {
+   531→      toast.error('Bağlantı hatası')
+   532→    } finally {
+   533→      setAdding(false)
+   534→    }
+   535→  }
+   536→
+   537→  const handleToggle = async (itemId: string) => {
+   538→    if (!token) return
+   539→    setTogglingId(itemId)
+   540→    try {
+   541→      const res = await fetch('/api/lists/items', {
+   542→        method: 'PATCH',
+   543→        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+   544→        body: JSON.stringify({ itemId }),
+   545→      })
+   546→      if (res.ok) {
+   547→        const data = await res.json()
+   548→        setItems((prev) =>
+   549→          prev.map((item) => (item.id === itemId ? { ...item, ...data.item } : item)),
+   550→        )
+   551→        // Update list counts in the store
+   552→        setLists(
+   553→          lists.map((l) => {
+   554→            if (l.id === activeList?.id) {
+   555→              const newCompleted = data.item.completed
+   556→                ? (l._count?.completed ?? 0) + 1
+   557→                : (l._count?.completed ?? 0) - 1
+   558→              return { ...l, _count: { ...l._count!, completed: newCompleted } }
+   559→            }
+   560→            return l
+   561→          }),
+   562→        )
+   563→      } else {
+   564→        toast.error('Güncellenemedi')
+   565→      }
+   566→    } catch {
+   567→      toast.error('Bağlantı hatası')
+   568→    } finally {
+   569→      setTogglingId(null)
+   570→    }
+   571→  }
+   572→
+   573→  const handleDelete = async (itemId: string) => {
+   574→    if (!token) return
+   575→    setDeletingId(itemId)
+   576→    try {
+   577→      const res = await fetch('/api/lists/items', {
+   578→        method: 'DELETE',
+   579→        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+   580→        body: JSON.stringify({ itemId }),
+   581→      })
+   582→      if (res.ok) {
+   583→        toast.success('Ürün silindi')
+   584→        setItems((prev) => prev.filter((item) => item.id !== itemId))
+   585→        // Update list counts in the store
+   586→        const deletedItem = items.find((i) => i.id === itemId)
+   587→        setLists(
+   588→          lists.map((l) => {
+   589→            if (l.id === activeList?.id) {
+   590→              return {
+   591→                ...l,
+   592→                _count: {
+   593→                  items: (l._count?.items ?? 1) - 1,
+   594→                  completed: (l._count?.completed ?? 0) - (deletedItem?.completed ? 1 : 0),
+   595→                },
+   596→              }
+   597→            }
+   598→            return l
+   599→          }),
+   600→        )
+   601→      } else {
+   602→        toast.error('Silinemedi')
+   603→      }
+   604→    } catch {
+   605→      toast.error('Bağlantı hatası')
+   606→    } finally {
+   607→      setDeletingId(null)
+   608→    }
+   609→  }
+   610→
+   611→  /* ---------- Loading ---------- */
+   612→  if (loading) {
+   613→    return (
+   614→      <div className="flex min-h-screen items-center justify-center bg-background">
+   615→        <Loader2 className="size-8 animate-spin text-primary" />
+   616→      </div>
+   617→    )
+   618→  }
+   619→
+   620→  return (
+   621→    <main className="mx-auto min-h-screen w-full max-w-lg bg-background px-4 pb-24 pt-6">
+   622→      <motion.div
+   623→        variants={containerVariants}
+   624→        initial="hidden"
+   625→        animate="visible"
+   626→        className="flex flex-col gap-5"
+   627→      >
+   628→        {/* ─── Header ─── */}
+   629→        <motion.section
+   630→          variants={itemVariants}
+   631→          className="flex items-center gap-3"
+   632→        >
+   633→          <Button
+   634→            onClick={handleBack}
+   635→            variant="ghost"
+   636→            size="icon"
+   637→            className="shrink-0 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+   638→          >
+   639→            <ArrowLeft className="size-5" />
+   640→          </Button>
+   641→          <h1 className="min-w-0 truncate text-xl font-bold text-foreground">
+   642→            {activeList?.name}
+   643→          </h1>
+   644→        </motion.section>
+   645→
+   646→        {/* ─── Search Bar ─── */}
+   647→        {!(searchQuery === '' && items.length === 0) && (
+   648→          <motion.div
+   649→            variants={itemVariants}
+   650→            className="flex items-center gap-2"
+   651→          >
+   652→            <div className="glass-card flex flex-1 items-center gap-2 rounded-full px-4 py-2">
+   653→              <Search className="size-4 shrink-0 text-muted-foreground" />
+   654→              <input
+   655→                type="text"
+   656→                value={searchQuery}
+   657→                onChange={(e) => setSearchQuery(e.target.value)}
+   658→                placeholder="Ürün ara..."
+   659→                className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none"
+   660→              />
+   661→              {searchQuery && (
+   662→                <button
+   663→                  onClick={() => setSearchQuery('')}
+   664→                  className="shrink-0 text-muted-foreground/50 hover:text-muted-foreground"
+   665→                >
+   666→                  <AlertCircle className="size-3.5" />
+   667→                </button>
+   668→              )}
+   669→            </div>
+   670→            <span className="shrink-0 text-xs text-muted-foreground">
+   671→              {filteredItems.length} ürün
+   672→            </span>
+   673→          </motion.div>
+   674→        )}
+   675→
+   676→        {/* ─── Summary Bar ─── */}
+   677→        <motion.section
+   678→          variants={itemVariants}
+   679→          className="glass-card rounded-2xl p-4"
+   680→        >
+   681→          <div className="flex items-center justify-between">
+   682→            <div className="flex items-center gap-2">
+   683→              <ShoppingCart className="size-4 text-primary" />
+   684→              <span className="text-sm text-muted-foreground">
+   685→                <span className="font-semibold text-primary">
+   686→                  {completedCount}
+   687→                </span>
+   688→                {' / '}{totalItems} tamamlandı
+   689→              </span>
+   690→            </div>
+   691→            <Badge
+   692→              className="bg-primary/15 text-xs text-primary hover:bg-primary/20"
+   693→            >
+   694→              {totalItems > 0 ? Math.round(progress) : 0}%
+   695→            </Badge>
+   696→          </div>
+   697→          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-border">
+   698→            <motion.div
+   699→              className="h-full rounded-full"
+   700→              style={{
+   701→                background: allCompleted
+   702→                  ? 'linear-gradient(90deg, #22C55E 0%, #4ADE80 100%)'
+   703→                  : 'linear-gradient(90deg, hsl(var(--primary)) 0%, #FFD60A 100%)',
+   704→              }}
+   705→              initial={{ width: 0 }}
+   706→              animate={{ width: `${progress}%` }}
+   707→              transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+   708→            />
+   709→          </div>
+   710→        </motion.section>
+   711→
+   712→        {/* ─── Celebration Message ─── */}
+   713→        <AnimatePresence>
+   714→          {allCompleted && (
+   715→            <motion.div
+   716→              initial={{ opacity: 0, scale: 0.9, y: -10 }}
+   717→              animate={{ opacity: 1, scale: 1, y: 0 }}
+   718→              exit={{ opacity: 0, scale: 0.9, y: -10 }}
+   719→              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+   720→              className="rounded-2xl bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 p-4 text-center"
+   721→            >
+   722→              <div className="flex items-center justify-center gap-2">
+   723→                <Sparkles className="size-5 text-primary" />
+   724→                <p className="text-base font-semibold text-primary">
+   725→                  Tüm alışveriş tamamlandı! 🎉
+   726→                </p>
+   727→                <Sparkles className="size-5 text-primary" />
+   728→              </div>
+   729→            </motion.div>
+   730→          )}
+   731→        </AnimatePresence>
+   732→
+   733→        {/* ─── Add Item Section ─── */}
+   734→        <motion.div variants={itemVariants} className="flex flex-col gap-2">
+   735→          {!addItemOpen ? (
+   736→            <Button
+   737→              onClick={() => {
+   738→                setAddItemOpen(true)
+   739→                setTimeout(() => inputRef.current?.focus(), 100)
+   740→              }}
+   741→              className="w-full justify-center gap-2 rounded-2xl border border-dashed border-primary/30 bg-primary/10 text-primary hover:bg-primary/15"
+   742→            >
+   743→              <Plus className="size-4" />
+   744→              Ekle
+   745→            </Button>
+   746→          ) : (
+   747→            <motion.div
+   748→              initial={{ opacity: 0, height: 0 }}
+   749→              animate={{ opacity: 1, height: 'auto' }}
+   750→              exit={{ opacity: 0, height: 0 }}
+   751→              className="glass-card flex flex-col gap-3 rounded-2xl p-4"
+   752→            >
+   753→              <Input
+   754→                ref={inputRef}
+   755→                value={itemName}
+   756→                onChange={(e) => setItemName(titleCase(e.target.value))}
+   757→                onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
+   758→                placeholder="Ürün adı"
+   759→                className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
+   760→              />
+   761→              <div className="flex gap-2">
+   762→                <Input
+   763→                  value={itemQty}
+   764→                  onChange={(e) => setItemQty(e.target.value)}
+   765→                  onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
+   766→                  placeholder="1"
+   767→                  type="number"
+   768→                  min={1}
+   769→                  className="w-20 shrink-0 border-primary/15 bg-background text-center text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
+   770→                />
+   771→                <Select value={itemUnit} onValueChange={setItemUnit}>
+   772→                  <SelectTrigger
+   773→                    className="w-full shrink-0 border-primary/15 bg-background text-foreground focus:ring-primary/30 focus:border-primary"
+   774→                  >
+   775→                    <SelectValue />
+   776→                  </SelectTrigger>
+   777→                  <SelectContent className="border-border bg-background">
+   778→                    {UNITS.map((u) => (
+   779→                      <SelectItem
+   780→                        key={u}
+   781→                        value={u}
+   782→                        className="text-foreground focus:bg-primary/15 focus:text-primary"
+   783→                      >
+   784→                        {u.charAt(0).toUpperCase() + u.slice(1)}
+   785→                      </SelectItem>
+   786→                    ))}
+   787→                  </SelectContent>
+   788→                </Select>
+   789→              </div>
+   790→              <div className="flex gap-2">
+   791→                <Button
+   792→                  onClick={() => {
+   793→                    setAddItemOpen(false)
+   794→                    setItemName('')
+   795→                    setItemQty('1')
+   796→                    setItemUnit('adet')
+   797→                  }}
+   798→                  variant="ghost"
+   799→                  className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+   800→                >
+   801→                  İptal
+   802→                </Button>
+   803→                <Button
+   804→                  onClick={handleAddItem}
+   805→                  disabled={!itemName.trim() || adding}
+   806→                  className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 hover-shine"
+   807→                >
+   808→                  {adding && <Loader2 className="mr-2 size-4 animate-spin" />}
+   809→                  <Plus className="mr-1 size-4" />
+   810→                  Ekle
+   811→                </Button>
+   812→              </div>
+   813→            </motion.div>
+   814→          )}
+   815→        </motion.div>
+   816→
+   817→        <Separator className="bg-border" />
+   818→
+   819→        {/* ─── Items List ─── */}
+   820→        {filteredItems.length === 0 && searchQuery === '' ? (
+   821→          <motion.div
+   822→            initial={{ opacity: 0, scale: 0.95 }}
+   823→            animate={{ opacity: 1, scale: 1 }}
+   824→            transition={{ duration: 0.4, delay: 0.15 }}
+   825→            className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
+   826→          >
+   827→            <div className="flex size-14 items-center justify-center rounded-full bg-primary/5">
+   828→              <Package className="size-7 text-muted-foreground/30" />
+   829→            </div>
+   830→            <div className="flex flex-col items-center gap-1">
+   831→              <p className="text-sm font-medium text-muted-foreground">
+   832→                Liste boş
+   833→              </p>
+   834→              <p className="text-xs text-muted-foreground/50">
+   835→                İlk ürününüzü ekleyerek alışverişe başlayın
+   836→              </p>
+   837→            </div>
+   838→          </motion.div>
+   839→        ) : filteredItems.length === 0 && searchQuery !== '' ? (
+   840→          <motion.div
+   841→            initial={{ opacity: 0, scale: 0.95 }}
+   842→            animate={{ opacity: 1, scale: 1 }}
+   843→            transition={{ duration: 0.4, delay: 0.15 }}
+   844→            className="glass-card flex flex-col items-center justify-center gap-3 rounded-2xl px-6 py-12"
+   845→          >
+   846→            <div className="flex size-14 items-center justify-center rounded-full bg-primary/5">
+   847→              <Search className="size-7 text-muted-foreground/30" />
+   848→            </div>
+   849→            <div className="flex flex-col items-center gap-1">
+   850→              <p className="text-sm font-medium text-muted-foreground">
+   851→                Sonuç bulunamadı
+   852→              </p>
+   853→              <p className="text-xs text-muted-foreground/50">
+   854→                "{searchQuery}" ile eşleşen ürün yok
+   855→              </p>
+   856→            </div>
+   857→          </motion.div>
+   858→        ) : (
+   859→          <motion.div
+   860→            variants={containerVariants}
+   861→            initial="hidden"
+   862→            animate="visible"
+   863→            className="flex flex-col gap-2"
+   864→          >
+   865→            <AnimatePresence mode="popLayout">
+   866→              {sortedItems.map((item) => (
+   867→                <motion.div
+   868→                  key={item.id}
+   869→                  variants={slideInVariants}
+   870→                  initial="hidden"
+   871→                  animate="visible"
+   872→                  exit="exit"
+   873→                  layout
+   874→                  className={`group relative rounded-2xl ${item.completed ? 'opacity-50' : ''}`}
+   875→                >
+   876→                  <div className="glass-card hover-border-glow flex items-center gap-3 rounded-2xl px-4 py-3">
+   877→                    {/* Checkbox */}
+   878→                    <motion.div
+   879→                      whileTap={{ scale: 0.85 }}
+   880→                      className="shrink-0"
+   881→                    >
+   882→                      <Checkbox
+   883→                        checked={item.completed}
+   884→                        disabled={togglingId === item.id}
+   885→                        onCheckedChange={() => handleToggle(item.id)}
+   886→                        className="size-5 rounded-md border-border data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+   887→                      />
+   888→                    </motion.div>
+   889→
+   890→                    {/* Item info */}
+   891→                    <div className="min-w-0 flex-1">
+   892→                      <p
+   893→                        className={`text-sm font-medium ${
+   894→                          item.completed
+   895→                            ? 'text-muted-foreground/70 line-through'
+   896→                            : 'text-foreground'
+   897→                        }`}
+   898→                      >
+   899→                        {item.name}
+   900→                      </p>
+   901→                      <div className="mt-1 flex flex-wrap items-center gap-2">
+   902→                        <Badge
+   903→                          variant="outline"
+   904→                          className="border-primary/15 bg-primary/10 text-xs text-primary"
+   905→                        >
+   906→                          {item.quantity} {item.unit}
+   907→                        </Badge>
+   908→                        <span className="text-xs text-muted-foreground/70">
+   909→                          {item.adder?.name}
+   910→                        </span>
+   911→                        {item.completed && item.purchaser?.name && (
+   912→                          <span className="text-xs text-green-500/70">
+   913→                            <Check className="mr-0.5 inline size-3" />
+   914→                            {item.purchaser.name}
+   915→                          </span>
+   916→                        )}
+   917→                      </div>
+   918→                    </div>
+   919→
+   920→                    {/* Delete button */}
+   921→                    <motion.div
+   922→                      initial={{ opacity: 0, scale: 0.8 }}
+   923→                      animate={{
+   924→                        opacity: deletingId === item.id ? 1 : 0.4,
+   925→                        scale: 1,
+   926→                      }}
+   927→                      whileHover={{ opacity: 1, scale: 1.1 }}
+   928→                      whileTap={{ scale: 0.9 }}
+   929→                      className="shrink-0"
+   930→                    >
+   931→                      <Button
+   932→                        variant="ghost"
+   933→                        size="icon"
+   934→                        className="size-8 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
+   935→                        onClick={(e) => {
+   936→                          e.stopPropagation()
+   937→                          handleDelete(item.id)
+   938→                        }}
+   939→                        disabled={deletingId === item.id}
+   940→                      >
+   941→                        {deletingId === item.id ? (
+   942→                          <Loader2 className="size-4 animate-spin" />
+   943→                        ) : (
+   944→                          <Trash2 className="size-4" />
+   945→                        )}
+   946→                      </Button>
+   947→                    </motion.div>
+   948→                  </div>
+   949→                </motion.div>
+   950→              ))}
+   951→            </AnimatePresence>
+   952→          </motion.div>
+   953→        )}
+   954→      </motion.div>
+   955→    </main>
+   956→  )
+   957→}
+   958→
+   959→/* ------------------------------------------------------------------ */
+   960→/*  Main Export                                                        */
+   961→/* ------------------------------------------------------------------ */
+   962→
+   963→export default function ListScreen() {
+   964→  const { activeList } = useAppStore()
+   965→
+   966→  return activeList ? <ItemsView /> : <ListSelectionView />
+   967→}
+   968→

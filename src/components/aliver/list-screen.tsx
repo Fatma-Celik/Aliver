@@ -15,6 +15,7 @@ import {
   Search,
   CheckCircle,
   AlertCircle,
+  Pencil,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -45,7 +46,10 @@ import { useAppStore, type ShoppingList, type ShoppingItem } from '@/store/auth-
 /* ------------------------------------------------------------------ */
 
 function titleCase(str: string): string {
-  return str.replace(/\b\w/g, c => c.toUpperCase())
+  return str
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
 }
 
 /* ------------------------------------------------------------------ */
@@ -118,6 +122,10 @@ function ListSelectionView() {
   const [creating, setCreating] = useState(false)
   const [deletingListId, setDeletingListId] = useState<string | null>(null)
   const [checkingAllListId, setCheckingAllListId] = useState<string | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editListId, setEditListId] = useState<string | null>(null)
+  const [editListName, setEditListName] = useState('')
+  const [editing, setEditing] = useState(false)
 
   const fetchLists = useCallback(async () => {
     if (!token) return
@@ -245,6 +253,36 @@ function ListSelectionView() {
     setActiveList(list)
   }
 
+  const openEditDialog = (list: ShoppingList, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setEditListId(list.id)
+    setEditListName(list.name)
+    setEditDialogOpen(true)
+  }
+
+  const handleEditList = async () => {
+    if (!token || !editListId || !editListName.trim()) return
+    setEditing(true)
+    try {
+      const res = await fetch(`/api/lists/${editListId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+        body: JSON.stringify({ name: editListName.trim() }),
+      })
+      if (res.ok) {
+        toast.success('Liste güncellendi')
+        setEditDialogOpen(false)
+        fetchLists()
+      } else {
+        toast.error('Liste güncellenemedi')
+      }
+    } catch {
+      toast.error('Bağlantı hatası')
+    } finally {
+      setEditing(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -338,7 +376,15 @@ function ListSelectionView() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-0.5">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 text-primary/60 hover:bg-primary/10 hover:text-primary"
+                        onClick={(e) => openEditDialog(list, e)}
+                      >
+                        <Pencil className="size-3.5" />
+                      </Button>
                       {!isComplete && total > 0 && (
                         <Button
                           variant="ghost"
@@ -434,6 +480,46 @@ function ListSelectionView() {
             >
               {creating && <Loader2 className="mr-2 size-4 animate-spin" />}
               Oluştur
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ─── Edit List Dialog ─── */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="rounded-2xl border-border bg-background sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Listeyi Düzenle</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Alışveriş listenizin adını değiştirin
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-2">
+            <Input
+              value={editListName}
+              onChange={(e) => setEditListName(titleCase(e.target.value))}
+              onKeyDown={(e) => e.key === 'Enter' && handleEditList()}
+              placeholder="Liste adı"
+              className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
+              autoFocus
+            />
+          </div>
+          <DialogFooter className="flex-row gap-2">
+            <DialogClose asChild>
+              <Button
+                variant="ghost"
+                className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+              >
+                İptal
+              </Button>
+            </DialogClose>
+            <Button
+              onClick={handleEditList}
+              disabled={!editListName.trim() || editing}
+              className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {editing && <Loader2 className="mr-2 size-4 animate-spin" />}
+              Kaydet
             </Button>
           </DialogFooter>
         </DialogContent>

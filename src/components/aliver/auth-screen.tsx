@@ -11,7 +11,10 @@ import { useAppStore, type User } from '@/store/auth-store'
 import { toast } from 'sonner'
 
 function titleCase(str: string): string {
-  return str.replace(/\b\w/g, c => c.toUpperCase())
+  return str
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
 }
 
 type AuthMode = 'login' | 'register'
