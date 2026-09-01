@@ -96,7 +96,6 @@ export default function HomeScreen() {
     setLists,
     setActiveList,
     setActiveTab,
-    theme,
   } = useAppStore()
 
   const { t } = useTranslation()
@@ -195,7 +194,7 @@ export default function HomeScreen() {
             transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
           >
             <Image
-              src={theme === 'dark' ? '/aliver-icon-dark.png' : '/aliver-icon-light.png'}
+              src="/aliver-icon-light.png"
               alt="ALIVER"
               width={120}
               height={120}
