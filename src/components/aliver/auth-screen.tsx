@@ -138,14 +138,6 @@ export default function AuthScreen() {
                 priority
               />
             </motion.div>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-sm text-muted-foreground"
-            >
-              {t['auth.slogan']}
-            </motion.p>
           </CardHeader>
 
           {/* Form body */}

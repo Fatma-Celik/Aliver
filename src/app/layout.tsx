@@ -18,7 +18,7 @@ const mono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "ALIVER - Aile Alışveriş Asistanınız",
-  description: "Alıver - Herkes bilir, biri alır.",
+  description: "ALIVER - Aile Alışveriş Asistanınız",
   icons: {
     icon: "/aliver-favicon.png",
   },

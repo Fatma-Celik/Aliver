@@ -20,7 +20,6 @@ const tr: TranslationMap = {
 
   // Auth
   'auth.title': 'ALIVER',
-  'auth.slogan': 'Herkes bilir, biri alır.',
   'auth.login': 'Giriş Yap',
   'auth.register': 'Kayıt Ol',
   'auth.noAccount': 'Hesabınız yok mu?',
@@ -198,7 +197,6 @@ const en: TranslationMap = {
 
   // Auth
   'auth.title': 'ALIVER',
-  'auth.slogan': 'Everyone knows, one buys.',
   'auth.login': 'Sign In',
   'auth.register': 'Sign Up',
   'auth.noAccount': "Don't have an account?",
@@ -376,7 +374,6 @@ const ar: TranslationMap = {
 
   // Auth
   'auth.title': 'ALIVER',
-  'auth.slogan': 'الجميع يعرف، واحد يشتري.',
   'auth.login': 'تسجيل الدخول',
   'auth.register': 'إنشاء حساب',
   'auth.noAccount': 'ليس لديك حساب؟',
