@@ -1,102 +1,38 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALIVER - Aile Daveti</title>
-</head>
-<body style="margin:0; padding:0; background-color:#000000; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; -webkit-font-smoothing:antialiased;">
-
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#000000; min-height:100vh;">
-    <tr>
-      <td align="center" style="padding: 40px 16px;">
-
-        <table role="presentation" width="480" cellpadding="0" cellspacing="0" border="0" style="max-width:480px; width:100%; border-radius:20px; overflow:hidden; border:1px solid rgba(252,163,17,0.15); background-color:#0a0a0a;">
-
-          <tr>
-            <td style="height:4px; background: linear-gradient(90deg, #FCA311 0%, #FFD60A 50%, #FCA311 100%);"></td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:40px 40px 8px 40px;">
-              <div style="width:64px; height:64px; border-radius:16px; background:linear-gradient(145deg, #FCA311 0%, #E8920A 100%); display:inline-flex; align-items:center; justify-content:center; box-shadow: 0 8px 32px rgba(252,163,17,0.3);">
-                <span style="font-size:28px; font-weight:800; color:#000000; letter-spacing:-1px;">A</span>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:8px 40px 0 40px;">
-              <h1 style="margin:0; font-size:28px; font-weight:700; color:#FFFFFF; letter-spacing:2px;">ALIVER</h1>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:20px 40px;">
-              <div style="width:40px; height:2px; background-color:#FCA311; border-radius:2px;">&nbsp;</div>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:0 40px 8px 40px;">
-              <h2 style="margin:0; font-size:22px; font-weight:600; color:#FFFFFF;">Aile Daveti</h2>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:8px 40px 32px 40px;">
-              <p style="margin:0; font-size:15px; line-height:1.7; color:rgba(255,255,255,0.6);">
-                Bir aile üyesi seni ALIVER ailesine davet etti! Alışveriş listelerini birlikte yönetmek için aşağıdaki butona tıkla.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Invite code display -->
-          <tr>
-            <td align="center" style="padding:0 40px 24px 40px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:rgba(20,33,61,0.6); border-radius:12px; border:1px solid rgba(252,163,17,0.1);">
-                <tr>
-                  <td align="center" style="padding:16px 20px;">
-                    <p style="margin:0 0 8px 0; font-size:11px; text-transform:uppercase; letter-spacing:2px; color:rgba(255,255,255,0.35);">Davet Kodu</p>
-                    <p style="margin:0; font-size:26px; font-weight:700; color:#FCA311; letter-spacing:3px; font-family:'Courier New',monospace;">{{ .Token }}</p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:0 40px 32px 40px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" style="border-radius:50px; background:linear-gradient(135deg, #FCA311 0%, #E8920A 100%); box-shadow: 0 6px 24px rgba(252,163,17,0.3);">
-                    <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block; padding:16px 48px; font-size:15px; font-weight:700; color:#000000; text-decoration:none; letter-spacing:0.5px;">
-                      Daveti Kabul Et
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <tr>
-            <td style="padding:0 40px;">
-              <div style="height:1px; background:linear-gradient(90deg, transparent, rgba(252,163,17,0.2), transparent);">&nbsp;</div>
-            </td>
-          </tr>
-
-          <tr>
-            <td align="center" style="padding:24px 40px 32px 40px;">
-              <p style="margin:0 0 4px 0; font-size:13px; font-weight:600; color:rgba(255,255,255,0.4); letter-spacing:1px;">ALIVER</p>
-              <p style="margin:0; font-size:11px; color:rgba(255,255,255,0.2);">Aile Alışveriş Asistanınız</p>
-            </td>
-          </tr>
-
-        </table>
-
-      </td>
-    </tr>
-  </table>
-
-</body>
-</html>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#000000; min-height:100vh;">
+<tr>
+<td align="center" style="padding: 40px 16px;">
+<table role="presentation" width="480" cellpadding="0" cellspacing="0" border="0" style="max-width:480px; width:100%; border-radius:20px; overflow:hidden; border:1px solid rgba(252,163,17,0.12); background-color:#0a0a0a;">
+<tr><td style="height:4px; background:linear-gradient(90deg, #FCA311 0%, #FFD60A 50%, #FCA311 100%);"></td></tr>
+<tr>
+<td align="center" style="padding:36px 40px 6px 40px;">
+<img src="{{ .SiteURL }}/aliver-logo-light.png" alt="ALIVER" width="200" style="display:block; max-width:200px; width:100%; height:auto;" />
+</td>
+</tr>
+<tr><td align="center" style="padding:20px 40px;"><div style="width:40px; height:2px; background-color:#FCA311; border-radius:2px;">&nbsp;</div></td></tr>
+<tr><td align="center" style="padding:0 40px 8px 40px;"><h2 style="margin:0; font-family:'Outfit',sans-serif; font-size:22px; font-weight:600; color:#FFFFFF;">Aile Daveti</h2></td></tr>
+<tr><td align="center" style="padding:8px 40px 28px 40px;"><p style="margin:0; font-family:'Outfit',sans-serif; font-size:15px; line-height:1.7; color:rgba(255,255,255,0.6);">Bir aile üyesi seni ALIVER ailesine davet etti! Alışveriş listelerini birlikte yönetmek için katıl.</p></td></tr>
+<tr>
+<td align="center" style="padding:0 40px 24px 40px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:rgba(20,33,61,0.5); border-radius:12px; border:1px solid rgba(252,163,17,0.1);"><tr>
+<td align="center" style="padding:18px 20px;">
+<p style="margin:0 0 8px 0; font-family:'Outfit',sans-serif; font-size:10px; text-transform:uppercase; letter-spacing:2.5px; color:rgba(255,255,255,0.3);">Davet Kodu</p>
+<p style="margin:0; font-family:'Outfit',sans-serif; font-size:28px; font-weight:700; color:#FCA311; letter-spacing:4px;">{{ .Token }}</p>
+</td></tr></table>
+</td></tr>
+<tr>
+<td align="center" style="padding:0 40px 28px 40px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+<td align="center" style="border-radius:50px; background:linear-gradient(135deg, #FCA311 0%, #E8920A 100%); box-shadow:0 6px 24px rgba(252,163,17,0.3);">
+<a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block; padding:16px 48px; font-family:'Outfit',sans-serif; font-size:15px; font-weight:700; color:#000000; text-decoration:none; letter-spacing:0.5px;">Daveti Kabul Et</a>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:0 40px;"><div style="height:1px; background:linear-gradient(90deg, transparent, rgba(252,163,17,0.15), transparent);">&nbsp;</div></td></tr>
+<tr>
+<td align="center" style="padding:20px 40px 28px 40px;">
+<p style="margin:0; font-family:'Outfit',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px;">ALIVER</p>
+<p style="margin:4px 0 0 0; font-family:'Outfit',sans-serif; font-size:11px; color:rgba(255,255,255,0.15);">Aile Alışveriş Asistanınız</p>
+</td>
+</tr>
+</table>
+</td></tr>
+</table>

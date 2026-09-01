@@ -369,7 +369,7 @@ export default function AuthScreen() {
                       toast.info(t['auth.googleHint'])
                     }
                   }}
-                  className="h-11 w-full rounded-full border-border bg-foreground text-background text-sm font-medium hover:opacity-90"
+                  className="h-11 w-full rounded-full border-white/20 bg-white text-black text-sm font-medium hover:bg-white/90 dark:border-white/20 dark:bg-white dark:text-black"
                 >
                   <Chrome className="size-4 mr-2" />
                   {t['auth.googleLogin']}
