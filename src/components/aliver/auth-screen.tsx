@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, Eye, EyeOff, Chrome } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { useAppStore, type User } from '@/store/auth-store'
+import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
 function titleCase(str: string): string {
@@ -44,6 +46,7 @@ export default function AuthScreen() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const { t } = useTranslation()
   const setAuth = useAppStore((s) => s.setAuth)
 
   const toggleMode = () => {
@@ -61,15 +64,15 @@ export default function AuthScreen() {
     setError('')
 
     if (mode === 'register' && !name.trim()) {
-      setError('Lütfen adınızı girin.')
+      setError(t['auth.error.noName'])
       return
     }
     if (!email.trim()) {
-      setError('Lütfen e-posta adresinizi girin.')
+      setError(t['auth.error.noEmail'])
       return
     }
     if (!password) {
-      setError('Lütfen şifrenizi girin.')
+      setError(t['auth.error.noPassword'])
       return
     }
 
@@ -89,13 +92,13 @@ export default function AuthScreen() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => null)
-        throw new Error(data?.error || 'Bir hata oluştu. Lütfen tekrar deneyin.')
+        throw new Error(data?.error || t['auth.error.generic'])
       }
 
       const data = await res.json()
       setAuth(data.token, data.user as User)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Beklenmeyen bir hata oluştu.')
+      setError(err instanceof Error ? err.message : t['auth.error.generic'])
     } finally {
       setLoading(false)
     }
@@ -120,21 +123,28 @@ export default function AuthScreen() {
         <Card className="glass-card shadow-2xl">
           {/* Header – Logo / Title */}
           <CardHeader className="flex flex-col items-center gap-2 pb-2 pt-2">
-            <motion.h1
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="bg-gradient-to-r from-[#FCA311] to-[#e8960f] bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl text-glow-gold"
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5, type: 'spring', stiffness: 300, damping: 20 }}
+              className="w-48 h-auto"
             >
-              ALIVER
-            </motion.h1>
+              <Image
+                src="/aliver-logo-light.png"
+                alt="ALIVER"
+                width={300}
+                height={100}
+                className="w-full h-auto"
+                priority
+              />
+            </motion.div>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
               className="text-sm text-muted-foreground"
             >
-              Herkes bilir, biri alır.
+              {t['auth.slogan']}
             </motion.p>
           </CardHeader>
 
@@ -167,12 +177,12 @@ export default function AuthScreen() {
                           htmlFor="name"
                           className="text-sm font-medium text-foreground/80"
                         >
-                          Adınız
+                          {t['auth.name']}
                         </Label>
                         <Input
                           id="name"
                           type="text"
-                          placeholder="Adınızı girin"
+                          placeholder={t['auth.namePlaceholder']}
                           value={name}
                           onChange={(e) => setName(titleCase(e.target.value))}
                           autoComplete="name"
@@ -189,12 +199,12 @@ export default function AuthScreen() {
                     htmlFor="email"
                     className="text-sm font-medium text-foreground/80"
                   >
-                    E-posta
+                    {t['auth.email']}
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="ornek@mail.com"
+                    placeholder={t['auth.emailPlaceholder']}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
@@ -208,13 +218,13 @@ export default function AuthScreen() {
                     htmlFor="password"
                     className="text-sm font-medium text-foreground/80"
                   >
-                    Şifre
+                    {t['auth.password']}
                   </Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      placeholder={t['auth.passwordPlaceholder']}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete={
@@ -229,7 +239,7 @@ export default function AuthScreen() {
                       onClick={() => setShowPassword((prev) => !prev)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors hover:text-muted-foreground"
                       aria-label={
-                        showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'
+                        showPassword ? t['auth.hidePassword'] : t['auth.showPassword']
                       }
                     >
                       {showPassword ? (
@@ -266,19 +276,19 @@ export default function AuthScreen() {
                   {loading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="size-4 animate-spin" />
-                      {mode === 'login' ? 'Giriş yapılıyor…' : 'Kayıt olunuyor…'}
+                      {mode === 'login' ? t['auth.loggingIn'] : t['auth.registering']}
                     </span>
                   ) : mode === 'login' ? (
-                    'Giriş Yap'
+                    t['auth.login']
                   ) : (
-                    'Kayıt Ol'
+                    t['auth.register']
                   )}
                 </Button>
 
                 {/* Separator */}
                 <div className="flex items-center gap-3">
                   <div className="h-px flex-1 bg-border" />
-                  <span className="text-xs text-muted-foreground">veya</span>
+                  <span className="text-xs text-muted-foreground">{t['common.or']}</span>
                   <div className="h-px flex-1 bg-border" />
                 </div>
 
@@ -287,12 +297,12 @@ export default function AuthScreen() {
                   type="button"
                   variant="outline"
                   onClick={() =>
-                    toast.info('Google girişi Supabase bağlantısı gerektirir. Supabase projenizi ayarlayın.')
+                    toast.info(t['auth.googleHint'])
                   }
                   className="h-11 w-full rounded-full border-border bg-foreground text-background text-sm font-medium hover:opacity-90"
                 >
                   <Chrome className="size-4 mr-2" />
-                  Google ile Giriş Yap
+                  {t['auth.googleLogin']}
                 </Button>
               </motion.form>
             </AnimatePresence>
@@ -302,14 +312,14 @@ export default function AuthScreen() {
           <CardFooter className="justify-center pb-6 pt-0 hover-glow rounded-b-2xl">
             <p className="text-sm text-muted-foreground">
               {mode === 'login'
-                ? 'Hesabınız yok mu?'
-                : 'Zaten hesabınız var mı?'}{' '}
+                ? t['auth.noAccount']
+                : t['auth.hasAccount']}{' '}
               <button
                 type="button"
                 onClick={toggleMode}
                 className="font-semibold text-[#FCA311] transition-colors hover:text-[#f5b533]"
               >
-                {mode === 'login' ? 'Kayıt Ol' : 'Giriş Yap'}
+                {mode === 'login' ? t['auth.register'] : t['auth.login']}
               </button>
             </p>
           </CardFooter>

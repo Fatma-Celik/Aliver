@@ -434,70 +434,27 @@ input:-webkit-autofill:focus {
 /*  BOTTOM NAVIGATION BAR                                       */
 /* ============================================================ */
 
-.bottom-nav-bar {
-  height: 72px;
-  border-radius: 28px;
-  padding: 8px;
-}
-
-.dark .bottom-nav-bar {
-  background: linear-gradient(135deg, rgba(20, 33, 61, 0.85) 0%, rgba(13, 27, 42, 0.92) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-.bottom-nav-bar {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 246, 243, 0.92) 100%);
+.nav-container {
+  backdrop-filter: blur(32px) saturate(1.6);
+  -webkit-backdrop-filter: blur(32px) saturate(1.6);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(40px) saturate(1.8);
-  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(248, 246, 243, 0.88) 100%);
 }
 
-.dark .bottom-nav-bar {
-  backdrop-filter: blur(40px) saturate(1.8);
-  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+.dark .nav-container {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 -2px 24px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(20, 33, 61, 0.75) 0%, rgba(13, 27, 42, 0.85) 100%);
 }
 
-.bottom-nav-shimmer {
-  height: 1px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, transparent 0%, rgba(212, 137, 14, 0.25) 30%, rgba(212, 137, 14, 0.45) 50%, rgba(212, 137, 14, 0.25) 70%, transparent 100%);
+/* Active tab background */
+:root {
+  --nav-active-bg: rgba(212, 137, 14, 0.10);
+  --nav-inactive: rgba(122, 122, 122, 0.40);
 }
 
-.dark .bottom-nav-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(252, 163, 17, 0.3) 30%, rgba(252, 163, 17, 0.5) 50%, rgba(252, 163, 17, 0.3) 70%, transparent 100%);
-}
-
-.bottom-nav-indicator {
-  height: 56px;
-  border-radius: 20px;
-}
-
-.dark .bottom-nav-indicator {
-  background: linear-gradient(135deg, rgba(252, 163, 17, 0.15) 0%, rgba(252, 163, 17, 0.08) 100%);
-  border: 1px solid rgba(252, 163, 17, 0.2);
-  box-shadow: 0 0 20px rgba(252, 163, 17, 0.08), inset 0 0 12px rgba(252, 163, 17, 0.05);
-}
-
-.bottom-nav-indicator {
-  background: linear-gradient(135deg, rgba(212, 137, 14, 0.12) 0%, rgba(212, 137, 14, 0.06) 100%);
-  border: 1px solid rgba(212, 137, 14, 0.15);
-  box-shadow: 0 0 16px rgba(212, 137, 14, 0.06), inset 0 0 10px rgba(212, 137, 14, 0.03);
-}
-
-.bottom-nav-dot {
-  height: 3px;
-  width: 16px;
-  border-radius: 9999px;
-}
-
-.dark .bottom-nav-dot {
-  background: linear-gradient(90deg, #FCA311 0%, #FFD60A 100%);
-  box-shadow: 0 0 8px rgba(252, 163, 17, 0.5);
-}
-
-.bottom-nav-dot {
-  background: linear-gradient(90deg, #D4890E 0%, #FCA311 100%);
-  box-shadow: 0 0 8px rgba(212, 137, 14, 0.4);
+.dark {
+  --nav-active-bg: rgba(252, 163, 17, 0.12);
+  --nav-inactive: rgba(136, 153, 170, 0.45);
 }

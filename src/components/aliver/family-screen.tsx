@@ -30,12 +30,13 @@ import {
 } from '@/components/ui/dialog'
 import { useAppStore, type Family } from '@/store/auth-store'
 import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 
 /* ------------------------------------------------------------------ */
-/*  Turkish relative time helper                                      */
+/*  Relative time helper                                               */
 /* ------------------------------------------------------------------ */
 
-function turkishRelativeTime(dateStr: string): string {
+function relativeTime(dateStr: string, t: Record<string, string>): string {
   const now = Date.now()
   const then = new Date(dateStr).getTime()
   const diffMs = now - then
@@ -46,14 +47,14 @@ function turkishRelativeTime(dateStr: string): string {
   const diffWeek = Math.floor(diffDay / 7)
   const diffMonth = Math.floor(diffDay / 30)
 
-  if (diffSec < 60) return 'az önce'
-  if (diffMin < 60) return `${diffMin} dakika önce`
-  if (diffHour < 24) return `${diffHour} saat önce`
-  if (diffDay < 7) return `${diffDay} gün önce`
-  if (diffWeek < 4) return `${diffWeek} hafta önce`
-  if (diffMonth < 12) return `${diffMonth} ay önce`
+  if (diffSec < 60) return t['family.time.justNow']
+  if (diffMin < 60) return `${diffMin} ${t['family.time.minutesAgo']}`
+  if (diffHour < 24) return `${diffHour} ${t['family.time.hoursAgo']}`
+  if (diffDay < 7) return `${diffDay} ${t['family.time.daysAgo']}`
+  if (diffWeek < 4) return `${diffWeek} ${t['family.time.weeksAgo']}`
+  if (diffMonth < 12) return `${diffMonth} ${t['family.time.monthsAgo']}`
   const diffYear = Math.floor(diffMonth / 12)
-  return `${diffYear} yıl önce`
+  return `${diffYear} ${t['family.time.yearsAgo']}`
 }
 
 /* ------------------------------------------------------------------ */
@@ -85,7 +86,8 @@ const itemVariants = {
 /* ------------------------------------------------------------------ */
 
 export default function FamilyScreen() {
-  const { token, family, setFamily, setLoading, isLoading } = useAppStore()
+  const { token, family, setFamily, setLoading, isLoading, user } = useAppStore()
+  const { t } = useTranslation()
 
   // Form states
   const [createName, setCreateName] = useState('')
@@ -153,7 +155,7 @@ export default function FamilyScreen() {
   const handleCreate = async () => {
     const name = createName.trim()
     if (!name) {
-      toast.error('Aile adı boş olamaz')
+      toast.error(t['family.error.nameRequired'])
       return
     }
     if (!token) return
@@ -171,13 +173,13 @@ export default function FamilyScreen() {
         const data = await res.json()
         setFamily(data.family as Family)
         setCreateName('')
-        toast.success('Aile başarıyla oluşturuldu!')
+        toast.success(t['family.created'])
       } else {
         const err = await res.json()
-        toast.error(err.error || 'Aile oluşturulamadı')
+        toast.error(err.error || t['family.error.createFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setActionLoading(false)
     }
@@ -187,7 +189,7 @@ export default function FamilyScreen() {
   const handleJoin = async () => {
     const code = joinCode.trim().toUpperCase()
     if (!code) {
-      toast.error('Davet kodu boş olamaz')
+      toast.error(t['family.error.codeRequired'])
       return
     }
     if (!token) return
@@ -205,13 +207,13 @@ export default function FamilyScreen() {
         const data = await res.json()
         setFamily(data.family as Family)
         setJoinCode('')
-        toast.success('Aileye başarıyla katıldınız!')
+        toast.success(t['family.joined'])
       } else {
         const err = await res.json()
-        toast.error(err.error || 'Aileye katılınamadı')
+        toast.error(err.error || t['family.error.joinFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setActionLoading(false)
     }
@@ -223,10 +225,10 @@ export default function FamilyScreen() {
     try {
       await navigator.clipboard.writeText(qrData.inviteCode)
       setCopied(true)
-      toast.success('Davet kodu kopyalandı')
+      toast.success(t['family.codeCopied'])
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      toast.error('Kopyalanamadı')
+      toast.error(t['family.copyFailed'])
     }
   }
 
@@ -242,13 +244,13 @@ export default function FamilyScreen() {
       if (res.ok) {
         setFamily(null)
         setLeaveDialogOpen(false)
-        toast.success('Aileden ayrıldınız')
+        toast.success(t['family.left'])
       } else {
         const err = await res.json()
-        toast.error(err.error || 'Ayrılırken hata oluştu')
+        toast.error(err.error || t['family.error.leaveFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setActionLoading(false)
     }
@@ -277,9 +279,9 @@ export default function FamilyScreen() {
         >
           {/* Header */}
           <motion.section variants={itemVariants} className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-foreground/90">Aile Yönetimi</h1>
+            <h1 className="text-2xl font-bold text-foreground/90">{t['family.title']}</h1>
             <p className="text-sm text-muted-foreground">
-              Yeni bir aile oluşturun veya mevcut bir aileye katılın
+              {t['family.createDesc']} {t['common.or'].toLowerCase()} {t['family.joinDesc'].toLowerCase()}
             </p>
           </motion.section>
 
@@ -295,16 +297,16 @@ export default function FamilyScreen() {
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
                   <Users className="size-5 text-primary" />
                 </div>
-                <h2 className="text-base font-semibold text-foreground">Aile Oluştur</h2>
+                <h2 className="text-base font-semibold text-foreground">{t['family.create']}</h2>
               </div>
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="family-name" className="text-xs text-muted-foreground">
-                  Aile Adı
+                  {t['family.familyName']}
                 </Label>
                 <Input
                   id="family-name"
-                  placeholder="Örn: Yeni Aile"
+                  placeholder={t['family.familyNamePlaceholder']}
                   value={createName}
                   onChange={(e) => setCreateName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
@@ -326,7 +328,7 @@ export default function FamilyScreen() {
                 ) : (
                   <Users className="size-4" />
                 )}
-                Oluştur
+                {t['family.createBtn']}
               </Button>
             </motion.div>
 
@@ -340,16 +342,16 @@ export default function FamilyScreen() {
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
                   <UserPlus className="size-5 text-primary" />
                 </div>
-                <h2 className="text-base font-semibold text-foreground">Aileye Katıl</h2>
+                <h2 className="text-base font-semibold text-foreground">{t['family.join']}</h2>
               </div>
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="invite-code" className="text-xs text-muted-foreground">
-                  Davet Kodu
+                  {t['family.inviteCode']}
                 </Label>
                 <Input
                   id="invite-code"
-                  placeholder="Örn: ABC123"
+                  placeholder={t['family.inviteCodePlaceholder']}
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
@@ -367,12 +369,12 @@ export default function FamilyScreen() {
                 ) : (
                   <UserPlus className="size-4" />
                 )}
-                Katıl
+                {t['family.joinBtn']}
               </Button>
 
               <p className="flex items-center gap-1.5 text-center text-xs text-muted-foreground/50">
                 <ScanLine className="size-3 shrink-0" />
-                QR kod ile katılmak için kamerayı kullanın
+                {t['family.qrScanHint']}
               </p>
             </motion.div>
           </div>
@@ -407,7 +409,7 @@ export default function FamilyScreen() {
                     variant="secondary"
                     className="rounded-full bg-primary/10 px-2 py-0 text-xs font-medium text-primary hover:bg-primary/15"
                   >
-                    {family.members.length} üye
+                    {family.members.length} {t['home.members']}
                   </Badge>
                 </div>
               </div>
@@ -421,7 +423,7 @@ export default function FamilyScreen() {
           >
             <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
               <QrCode className="size-4 text-primary" />
-              Davet QR Kodu
+              {t['family.qrTitle']}
             </div>
 
             {/* QR Code */}
@@ -438,7 +440,7 @@ export default function FamilyScreen() {
 
             {/* Invite Code Display */}
             <div className="flex flex-col items-center gap-2">
-              <p className="text-xs text-muted-foreground/70">Davet Kodu</p>
+              <p className="text-xs text-muted-foreground/70">{t['family.inviteCode']}</p>
               <div className="flex items-center gap-2">
                 <span className="rounded-lg bg-primary/10 px-4 py-1.5 font-mono text-lg font-bold tracking-[0.2em] text-primary">
                   {qrData?.inviteCode ?? family.inviteCode}
@@ -465,12 +467,13 @@ export default function FamilyScreen() {
           <motion.section variants={itemVariants} className="flex flex-col gap-3">
             <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
               <Users className="size-4 text-primary" />
-              Üyeler
+              {t['family.members']}
             </h3>
 
             <div className="flex max-h-96 flex-col gap-2 overflow-y-auto">
               {family.members.map((member, index) => {
                 const isAdmin = member.role === 'admin'
+                const isYou = member.user.id === user?.id
                 return (
                   <motion.div
                     key={member.id}
@@ -499,10 +502,10 @@ export default function FamilyScreen() {
                     {/* Name & meta */}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">
-                        {member.user.name}
+                        {member.user.name} {isYou && <span className="text-muted-foreground/60">{t['family.you']}</span>}
                       </p>
                       <p className="text-xs text-muted-foreground/70">
-                        {turkishRelativeTime(member.joinedAt)} katıldı
+                        {relativeTime(member.joinedAt, t)} {t['family.joinedAt']}
                       </p>
                     </div>
 
@@ -518,10 +521,10 @@ export default function FamilyScreen() {
                       {isAdmin ? (
                         <>
                           <Crown className="size-3" />
-                          Admin
+                          {t['family.admin']}
                         </>
                       ) : (
-                        'Üye'
+                        t['family.member']
                       )}
                     </Badge>
                   </motion.div>
@@ -538,7 +541,7 @@ export default function FamilyScreen() {
               className="w-full rounded-xl border border-destructive/20 bg-destructive/5 py-5 text-sm font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive/80"
             >
               <LogOut className="size-4" />
-              Aileden Ayrıl
+              {t['family.leave']}
             </Button>
           </motion.section>
         </motion.div>
@@ -550,11 +553,11 @@ export default function FamilyScreen() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground">
               <LogOut className="size-5 text-destructive" />
-              Aileden Ayrıl
+              {t['family.leave']}
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground/80">{family.name}</span> ailesinden ayrılmak
-              istediğinize emin misiniz? Bu işlemi geri alamazsınız.
+              <span className="font-semibold text-foreground/80">{family.name}</span>{' '}
+              {t['family.leaveConfirm']} {t['family.leaveDesc']}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-3 pt-2">
@@ -563,7 +566,7 @@ export default function FamilyScreen() {
               onClick={() => setLeaveDialogOpen(false)}
               className="flex-1 rounded-xl bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
             >
-              İptal
+              {t['common.cancel']}
             </Button>
             <Button
               onClick={handleLeave}
@@ -573,7 +576,7 @@ export default function FamilyScreen() {
               {actionLoading ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                'Ayrıl'
+                t['family.leave']
               )}
             </Button>
           </DialogFooter>

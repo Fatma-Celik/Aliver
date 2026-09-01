@@ -58,6 +58,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useAppStore, type User as UserType, type Language } from '@/store/auth-store'
+import { useTranslation } from '@/lib/i18n'
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -117,6 +118,7 @@ export default function ProfileScreen() {
     language,
     setLanguage,
   } = useAppStore()
+  const { t } = useTranslation()
 
   const [stats, setStats] = useState<Stats>({ members: 0, lists: 0, completed: 0 })
   const [loadingStats, setLoadingStats] = useState(true)
@@ -207,14 +209,14 @@ export default function ProfileScreen() {
       if (res.ok) {
         const data = await res.json()
         updateUser(data.user)
-        toast.success('Profil güncellendi!')
+        toast.success(t['profile.profileUpdated'])
         setEditDialogOpen(false)
       } else {
         const err = await res.json()
-        toast.error(err.error || 'Güncelleme başarısız')
+        toast.error(err.error || t['profile.updateFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setSaving(false)
     }
@@ -244,13 +246,13 @@ export default function ProfileScreen() {
       if (res.ok) {
         const data = await res.json()
         updateUser({ avatar: data.avatarUrl })
-        toast.success('Profil fotoğrafı güncellendi!')
+        toast.success(t['profile.avatarUpdated'])
       } else {
         const err = await res.json()
-        toast.error(err.error || 'Yükleme başarısız')
+        toast.error(err.error || t['profile.avatarUploadFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setUploadingAvatar(false)
       e.target.value = ''
@@ -267,10 +269,10 @@ export default function ProfileScreen() {
       if (res.ok) {
         const data = await res.json()
         updateUser({ avatar: null })
-        toast.success('Profil fotoğrafı kaldırıldı')
+        toast.success(t['profile.avatarRemoved'])
       }
     } catch {
-      toast.error('Hata oluştu')
+      toast.error(t['profile.connectionError'])
     }
     setRemoveAvatarOpen(false)
   }
@@ -356,7 +358,7 @@ export default function ProfileScreen() {
             className="text-xs text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
           >
             <Trash2 className="w-3 h-3" />
-            Fotoğrafı kaldır
+            {t['profile.removeAvatar']}
           </button>
         )}
       </motion.div>
@@ -369,16 +371,16 @@ export default function ProfileScreen() {
           </div>
         ) : (
           <>
-            <StatCard icon={<Users className="w-4 h-4" />} label="Aile Üyeleri" value={stats.members} />
-            <StatCard icon={<ShoppingBag className="w-4 h-4" />} label="Listeler" value={stats.lists} />
-            <StatCard icon={<PackageCheck className="w-4 h-4" />} label="Tamamlanan" value={stats.completed} />
+            <StatCard icon={<Users className="w-4 h-4" />} label={t['profile.stats.members']} value={stats.members} />
+            <StatCard icon={<ShoppingBag className="w-4 h-4" />} label={t['profile.stats.lists']} value={stats.lists} />
+            <StatCard icon={<PackageCheck className="w-4 h-4" />} label={t['profile.stats.completed']} value={stats.completed} />
           </>
         )}
       </motion.div>
 
       {/* ─── Theme & Appearance ─── */}
       <motion.div variants={item}>
-        <SectionTitle icon={<Sun className="w-4 h-4" />} title="Görünüm" />
+        <SectionTitle icon={<Sun className="w-4 h-4" />} title={t['profile.appearance']} />
         <div className="glass-card rounded-2xl divide-y divide-border mt-2">
           {/* Theme toggle */}
           <div className="flex items-center justify-between px-4 py-3.5">
@@ -401,15 +403,15 @@ export default function ProfileScreen() {
                 </AnimatePresence>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-foreground">Tema</span>
+                <span className="text-sm font-medium text-foreground">{t['profile.theme']}</span>
                 <span className="text-xs text-muted-foreground">
-                  {theme === 'dark' ? 'Karanlık Platini' : 'Açık Platini'}
+                  {theme === 'dark' ? t['profile.darkTheme'] : t['profile.lightTheme']}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted-foreground">
-                {theme === 'dark' ? 'Koyu' : 'Açık'}
+                {theme === 'dark' ? t['profile.dark'] : t['profile.light']}
               </span>
               <Switch
                 checked={theme === 'light'}
@@ -426,33 +428,33 @@ export default function ProfileScreen() {
 
       {/* ─── Notifications ─── */}
       <motion.div variants={item}>
-        <SectionTitle icon={<Bell className="w-4 h-4" />} title="Bildirimler" />
+        <SectionTitle icon={<Bell className="w-4 h-4" />} title={t['profile.notifications']} />
         <div className="glass-card rounded-2xl divide-y divide-border mt-2">
           <NotificationToggle
             icon={<ListChecks className="w-4 h-4" />}
-            title="Liste Güncellemeleri"
-            description="Liste oluşturulduğunda ve düzenlendiğinde"
+            title={t['profile.notif.listUpdates']}
+            description={t['profile.notif.listUpdatesDesc']}
             checked={notifications.listUpdates}
             onChange={(v) => setNotifications({ listUpdates: v })}
           />
           <NotificationToggle
             icon={<ShoppingBag className="w-4 h-4" />}
-            title="Yeni Ürün Eklendi"
-            description="Listeye yeni ürün eklendiğinde"
+            title={t['profile.notif.newItems']}
+            description={t['profile.notif.newItemsDesc']}
             checked={notifications.newItems}
             onChange={(v) => setNotifications({ newItems: v })}
           />
           <NotificationToggle
             icon={<PackageCheck className="w-4 h-4" />}
-            title="Alım Bildirimleri"
-            description="Bir ürün alındı olarak işaretlendiğinde"
+            title={t['profile.notif.purchaseAlerts']}
+            description={t['profile.notif.purchaseAlertsDesc']}
             checked={notifications.purchaseAlerts}
             onChange={(v) => setNotifications({ purchaseAlerts: v })}
           />
           <NotificationToggle
             icon={<UserPlus className="w-4 h-4" />}
-            title="Aile Aktiviteleri"
-            description="Yeni üye katıldığında veya ayrıldığında"
+            title={t['profile.notif.familyActivity']}
+            description={t['profile.notif.familyActivityDesc']}
             checked={notifications.familyActivity}
             onChange={(v) => setNotifications({ familyActivity: v })}
           />
@@ -461,7 +463,7 @@ export default function ProfileScreen() {
 
       {/* ─── Account & General ─── */}
       <motion.div variants={item}>
-        <SectionTitle icon={<User className="w-4 h-4" />} title="Hesap" />
+        <SectionTitle icon={<User className="w-4 h-4" />} title={t['profile.account']} />
         <div className="glass-card rounded-2xl divide-y divide-border mt-2">
           {/* Language Select */}
           <div className="flex items-center justify-between px-4 py-3.5">
@@ -470,8 +472,8 @@ export default function ProfileScreen() {
                 <Globe className="w-4 h-4 text-primary" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-foreground">Dil Seçimi</span>
-                <span className="text-xs text-muted-foreground">Uygulama dili</span>
+                <span className="text-sm font-medium text-foreground">{t['profile.language']}</span>
+                <span className="text-xs text-muted-foreground">{t['profile.languageDesc']}</span>
               </div>
             </div>
             <Select
@@ -500,7 +502,7 @@ export default function ProfileScreen() {
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-primary/40 text-primary text-sm font-semibold hover:bg-primary/10 active:scale-[0.98] transition-all"
         >
           <LogOut className="w-4 h-4" />
-          Çıkış Yap
+          {t['profile.logout']}
         </button>
       </motion.div>
 
@@ -513,28 +515,28 @@ export default function ProfileScreen() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="rounded-2xl border-border bg-background sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Profili Düzenle</DialogTitle>
+            <DialogTitle className="text-foreground">{t['profile.editProfile']}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              İsim ve e-posta adresinizi güncelleyin
+              {t['profile.editProfileDesc']}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
               <Label htmlFor="edit-name" className="text-sm text-foreground">
-                İsim
+                {t['profile.name']}
               </Label>
               <Input
                 id="edit-name"
                 value={editName}
                 onChange={(e) => setEditName(titleCase(e.target.value))}
-                placeholder="Adınız Soyadınız"
+                placeholder={t['profile.namePlaceholder']}
                 className="glass-input border-border bg-background text-foreground"
                 autoFocus
               />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="edit-email" className="text-sm text-foreground">
-                E-posta Adresi
+                {t['profile.email']}
               </Label>
               <Input
                 id="edit-email"
@@ -553,7 +555,7 @@ export default function ProfileScreen() {
                 className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
               >
                 <X className="w-4 h-4 mr-1" />
-                İptal
+                {t['common.cancel']}
               </Button>
             </DialogClose>
             <Button
@@ -566,7 +568,7 @@ export default function ProfileScreen() {
               ) : (
                 <Check className="w-4 h-4 mr-1" />
               )}
-              Kaydet
+              {t['common.save']}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -576,22 +578,22 @@ export default function ProfileScreen() {
       <AlertDialog open={removeAvatarOpen} onOpenChange={setRemoveAvatarOpen}>
         <AlertDialogContent className="rounded-2xl border-border bg-background">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">Fotoğrafı Kaldır</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground">{t['profile.removeAvatar']}</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
-              Profil fotoğrafınızı kaldırmak istediğinizden emin misiniz?
+              {t['profile.removeAvatarConfirm']}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row gap-2">
             <AlertDialogCancel
               className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
             >
-              İptal
+              {t['common.cancel']}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemoveAvatar}
               className="flex-1 rounded-full bg-destructive text-white hover:bg-destructive/90"
             >
-              Kaldır
+              {t['common.delete']}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -601,16 +603,16 @@ export default function ProfileScreen() {
       <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
         <AlertDialogContent className="rounded-2xl border-border bg-background">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">Çıkış Yap</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground">{t['profile.logout']}</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground">
-              Hesabınızdan çıkış yapmak istediğinizden emin misiniz?
+              {t['profile.logoutConfirm']}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-row gap-2">
             <AlertDialogCancel
               className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
             >
-              İptal
+              {t['common.cancel']}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
@@ -620,7 +622,7 @@ export default function ProfileScreen() {
               className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <LogOut className="w-4 h-4 mr-1" />
-              Çıkış Yap
+              {t['profile.logout']}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -637,7 +639,7 @@ function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string })
   return (
     <div className="flex items-center gap-2 px-1">
       <div className="text-primary">{icon}</div>
-      <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <h3 className="text-xs font-semibold tracking-wider text-muted-foreground">
         {title}
       </h3>
     </div>

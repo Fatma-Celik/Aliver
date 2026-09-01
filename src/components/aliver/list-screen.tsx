@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAppStore, type ShoppingList, type ShoppingItem } from '@/store/auth-store'
+import { useTranslation } from '@/lib/i18n'
 
 /* ------------------------------------------------------------------ */
 /*  Utilities                                                          */
@@ -116,6 +117,7 @@ function authHeaders(token: string) {
 
 function ListSelectionView() {
   const { token, lists, setLists, setActiveList } = useAppStore()
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [newListName, setNewListName] = useState('')
@@ -175,15 +177,15 @@ function ListSelectionView() {
         body: JSON.stringify({ name: newListName.trim() }),
       })
       if (res.ok) {
-        toast.success('Liste oluşturuldu!')
+        toast.success(t['list.listCreated'])
         setNewListName('')
         setDialogOpen(false)
         fetchLists()
       } else {
-        toast.error('Liste oluşturulamadı')
+        toast.error(t['list.listCreateFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setCreating(false)
     }
@@ -199,13 +201,13 @@ function ListSelectionView() {
         headers: authHeaders(token),
       })
       if (res.ok) {
-        toast.success('Liste silindi')
+        toast.success(t['list.listDeleted'])
         fetchLists()
       } else {
-        toast.error('Liste silinemedi')
+        toast.error(t['list.listDeleteFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setDeletingListId(null)
     }
@@ -225,7 +227,7 @@ function ListSelectionView() {
         headers: authHeaders(token),
       })
       if (!itemsRes.ok) {
-        toast.error('Ürünler yüklenemedi')
+        toast.error(t['list.itemsLoadFailed'])
         return
       }
       const itemsData = await itemsRes.json()
@@ -240,10 +242,10 @@ function ListSelectionView() {
         })
       }
 
-      toast.success('Tüm ürünler tamamlandı olarak işaretlendi')
+      toast.success(t['list.allCompleted'])
       fetchLists()
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setCheckingAllListId(null)
     }
@@ -270,14 +272,14 @@ function ListSelectionView() {
         body: JSON.stringify({ name: editListName.trim() }),
       })
       if (res.ok) {
-        toast.success('Liste güncellendi')
+        toast.success(t['list.listUpdated'])
         setEditDialogOpen(false)
         fetchLists()
       } else {
-        toast.error('Liste güncellenemedi')
+        toast.error(t['list.listUpdateFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setEditing(false)
     }
@@ -305,7 +307,7 @@ function ListSelectionView() {
             <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15">
               <ShoppingBag className="size-5 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-primary">Alışveriş Listeleri</h1>
+            <h1 className="text-2xl font-bold text-primary">{t['list.title']}</h1>
           </div>
           <Button
             onClick={() => setDialogOpen(true)}
@@ -329,10 +331,10 @@ function ListSelectionView() {
             </div>
             <div className="flex flex-col items-center gap-1.5">
               <p className="text-sm font-medium text-muted-foreground">
-                Henüz liste oluşturulmadı
+                {t['list.emptyList']}
               </p>
               <p className="text-xs text-muted-foreground/50">
-                Yeni bir alışveriş listesi oluşturmak için + butonuna tıklayın
+                {t['list.emptyListDesc']}
               </p>
             </div>
           </motion.div>
@@ -372,7 +374,7 @@ function ListSelectionView() {
                           <span className="font-medium text-primary">
                             {completed}
                           </span>{' '}
-                          / {total} tamamlandı
+                          / {total} {t['list.completed'].toLowerCase()}
                         </p>
                       </div>
                     </div>
@@ -418,7 +420,7 @@ function ListSelectionView() {
                           className="shrink-0 bg-green-500/15 text-xs text-green-500 hover:bg-green-500/20"
                         >
                           <Check className="size-3 mr-1" />
-                          Tamamlandı
+                          {t['list.completed']}
                         </Badge>
                       )}
                     </div>
@@ -449,9 +451,9 @@ function ListSelectionView() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="rounded-2xl border-border bg-background sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Yeni Liste Oluştur</DialogTitle>
+            <DialogTitle className="text-foreground">{t['list.create']}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Alışveriş listenize bir isim verin
+              {t['list.createDesc']}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-2">
@@ -459,7 +461,7 @@ function ListSelectionView() {
               value={newListName}
               onChange={(e) => setNewListName(titleCase(e.target.value))}
               onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
-              placeholder="Örn: Haftalık market alışverişi"
+              placeholder={t['list.createPlaceholder']}
               className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
               autoFocus
             />
@@ -470,7 +472,7 @@ function ListSelectionView() {
                 variant="ghost"
                 className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
               >
-                İptal
+                {t['common.cancel']}
               </Button>
             </DialogClose>
             <Button
@@ -479,7 +481,7 @@ function ListSelectionView() {
               className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {creating && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Oluştur
+              {t['common.save']}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -489,9 +491,9 @@ function ListSelectionView() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="rounded-2xl border-border bg-background sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Listeyi Düzenle</DialogTitle>
+            <DialogTitle className="text-foreground">{t['list.edit']}</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Alışveriş listenizin adını değiştirin
+              {t['list.editDesc']}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-2">
@@ -499,7 +501,7 @@ function ListSelectionView() {
               value={editListName}
               onChange={(e) => setEditListName(titleCase(e.target.value))}
               onKeyDown={(e) => e.key === 'Enter' && handleEditList()}
-              placeholder="Liste adı"
+              placeholder={t['list.editNamePlaceholder']}
               className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
               autoFocus
             />
@@ -510,7 +512,7 @@ function ListSelectionView() {
                 variant="ghost"
                 className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
               >
-                İptal
+                {t['common.cancel']}
               </Button>
             </DialogClose>
             <Button
@@ -519,7 +521,7 @@ function ListSelectionView() {
               className="flex-1 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {editing && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Kaydet
+              {t['common.save']}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -534,6 +536,7 @@ function ListSelectionView() {
 
 function ItemsView() {
   const { token, activeList, setActiveList, setLists, lists } = useAppStore()
+  const { t } = useTranslation()
   const [items, setItems] = useState<ShoppingItem[]>([])
   const [loading, setLoading] = useState(true)
   const [addItemOpen, setAddItemOpen] = useState(false)
@@ -545,6 +548,14 @@ function ItemsView() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+
+  /* ---------- Unit label map ---------- */
+  const unitLabels: Record<string, string> = {
+    adet: t['list.units.adet'],
+    kg: t['list.units.kg'],
+    litre: t['list.units.litre'],
+    paket: t['list.units.paket'],
+  }
 
   /* ---------- Fetch items ---------- */
   const fetchItems = useCallback(async () => {
@@ -604,17 +615,17 @@ function ItemsView() {
         }),
       })
       if (res.ok) {
-        toast.success('Ürün eklendi')
+        toast.success(t['list.added'])
         setItemName('')
         setItemQty('1')
-        setItemUnit('adet')
+        setItemUnit['adet']
         setAddItemOpen(false)
         fetchItems()
       } else {
-        toast.error('Ürün eklenemedi')
+        toast.error(t['list.addFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setAdding(false)
     }
@@ -647,10 +658,10 @@ function ItemsView() {
           }),
         )
       } else {
-        toast.error('Güncellenemedi')
+        toast.error(t['list.toggleFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setTogglingId(null)
     }
@@ -666,7 +677,7 @@ function ItemsView() {
         body: JSON.stringify({ itemId }),
       })
       if (res.ok) {
-        toast.success('Ürün silindi')
+        toast.success(t['list.deleted'])
         setItems((prev) => prev.filter((item) => item.id !== itemId))
         // Update list counts in the store
         const deletedItem = items.find((i) => i.id === itemId)
@@ -685,10 +696,10 @@ function ItemsView() {
           }),
         )
       } else {
-        toast.error('Silinemedi')
+        toast.error(t['list.deleteFailed'])
       }
     } catch {
-      toast.error('Bağlantı hatası')
+      toast.error(t['profile.connectionError'])
     } finally {
       setDeletingId(null)
     }
@@ -741,7 +752,7 @@ function ItemsView() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ürün ara..."
+                placeholder={t['list.search']}
                 className="min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/50 outline-none"
               />
               {searchQuery && (
@@ -754,7 +765,7 @@ function ItemsView() {
               )}
             </div>
             <span className="shrink-0 text-xs text-muted-foreground">
-              {filteredItems.length} ürün
+              {filteredItems.length} {t['list.items']}
             </span>
           </motion.div>
         )}
@@ -771,7 +782,7 @@ function ItemsView() {
                 <span className="font-semibold text-primary">
                   {completedCount}
                 </span>
-                {' / '}{totalItems} tamamlandı
+                {' / '}{totalItems} {t['list.completed'].toLowerCase()}
               </span>
             </div>
             <Badge
@@ -808,7 +819,7 @@ function ItemsView() {
               <div className="flex items-center justify-center gap-2">
                 <Sparkles className="size-5 text-primary" />
                 <p className="text-base font-semibold text-primary">
-                  Tüm alışveriş tamamlandı! 🎉
+                  {t['list.completedMsg']}
                 </p>
                 <Sparkles className="size-5 text-primary" />
               </div>
@@ -827,7 +838,7 @@ function ItemsView() {
               className="w-full justify-center gap-2 rounded-2xl border border-dashed border-primary/30 bg-primary/10 text-primary hover:bg-primary/15"
             >
               <Plus className="size-4" />
-              Ekle
+              {t['list.addItem']}
             </Button>
           ) : (
             <motion.div
@@ -841,7 +852,7 @@ function ItemsView() {
                 value={itemName}
                 onChange={(e) => setItemName(titleCase(e.target.value))}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-                placeholder="Ürün adı"
+                placeholder={t['list.itemName']}
                 className="border-primary/15 bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-primary focus-visible:ring-primary/30 glass-input"
               />
               <div className="flex gap-2">
@@ -867,7 +878,7 @@ function ItemsView() {
                         value={u}
                         className="text-foreground focus:bg-primary/15 focus:text-primary"
                       >
-                        {u.charAt(0).toUpperCase() + u.slice(1)}
+                        {unitLabels[u]}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -879,12 +890,12 @@ function ItemsView() {
                     setAddItemOpen(false)
                     setItemName('')
                     setItemQty('1')
-                    setItemUnit('adet')
+                    setItemUnit['adet']
                   }}
                   variant="ghost"
                   className="flex-1 text-muted-foreground hover:bg-primary/5 hover:text-foreground"
                 >
-                  İptal
+                  {t['common.cancel']}
                 </Button>
                 <Button
                   onClick={handleAddItem}
@@ -893,7 +904,7 @@ function ItemsView() {
                 >
                   {adding && <Loader2 className="mr-2 size-4 animate-spin" />}
                   <Plus className="mr-1 size-4" />
-                  Ekle
+                  {t['list.addItem']}
                 </Button>
               </div>
             </motion.div>
@@ -915,10 +926,10 @@ function ItemsView() {
             </div>
             <div className="flex flex-col items-center gap-1">
               <p className="text-sm font-medium text-muted-foreground">
-                Liste boş
+                {t['list.emptyItems']}
               </p>
               <p className="text-xs text-muted-foreground/50">
-                İlk ürününüzü ekleyerek alışverişe başlayın
+                {t['list.emptyItemsDesc']}
               </p>
             </div>
           </motion.div>
@@ -934,10 +945,10 @@ function ItemsView() {
             </div>
             <div className="flex flex-col items-center gap-1">
               <p className="text-sm font-medium text-muted-foreground">
-                Sonuç bulunamadı
+                {t['list.noResults']}
               </p>
               <p className="text-xs text-muted-foreground/50">
-                "{searchQuery}" ile eşleşen ürün yok
+                {t['list.noResultsDesc']} "{searchQuery}"
               </p>
             </div>
           </motion.div>
@@ -989,7 +1000,7 @@ function ItemsView() {
                           variant="outline"
                           className="border-primary/15 bg-primary/10 text-xs text-primary"
                         >
-                          {item.quantity} {item.unit}
+                          {item.quantity} {unitLabels[item.unit] ?? item.unit}
                         </Badge>
                         <span className="text-xs text-muted-foreground/70">
                           {item.adder?.name}

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAppStore, type ShoppingList, type Family } from '@/store/auth-store'
+import { useTranslation } from '@/lib/i18n'
 
 /* ------------------------------------------------------------------ */
 /*  Turkish date helpers                                               */
@@ -95,7 +96,10 @@ export default function HomeScreen() {
     setLists,
     setActiveList,
     setActiveTab,
+    theme,
   } = useAppStore()
+
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(true)
   const [now] = useState(new Date())
@@ -185,33 +189,20 @@ export default function HomeScreen() {
       >
         {/* ─── Branding Header ─── */}
         <motion.section variants={itemVariants} className="flex flex-col items-center gap-3 pt-2">
-          {/* Logo with gold ring */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
-            className="relative"
           >
-            <div className="w-20 h-20 rounded-full ring-[3px] ring-primary/60 ring-offset-2 ring-offset-background overflow-hidden">
-              <Image
-                src="/aliver-icon.png"
-                alt="ALIVER"
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Image
+              src={theme === 'dark' ? '/aliver-icon-dark.png' : '/aliver-icon-light.png'}
+              alt="ALIVER"
+              width={80}
+              height={80}
+              className="w-20 h-20 object-contain"
+              priority
+            />
           </motion.div>
-
-          {/* ALIVER title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4 }}
-            className="text-3xl font-extrabold tracking-tight platini-text-gradient"
-          >
-            ALIVER
-          </motion.h1>
 
           {/* Slogan */}
           <motion.p
@@ -220,14 +211,14 @@ export default function HomeScreen() {
             transition={{ delay: 0.25, duration: 0.4 }}
             className="text-sm text-muted-foreground italic"
           >
-            Herkes bilir, biri alır.
+            {t['auth.slogan']}
           </motion.p>
         </motion.section>
 
         {/* ─── Welcome Section ─── */}
         <motion.section variants={itemVariants} className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold text-foreground/90">
-            Merhaba,{' '}
+            {t['home.hello']},{' '}
             <span className="platini-text-gradient">{user?.name ?? 'Kullanıcı'}</span>
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -256,10 +247,10 @@ export default function HomeScreen() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-black">
-                      Ailenizi Kurun
+                      {t['home.createFamily']}
                     </h3>
                     <p className="text-sm text-black/70">
-                      Alışveriş listelerinizi ailenizle paylaşın
+                      {t['home.createFamilyDesc']}
                     </p>
                   </div>
                 </div>
@@ -268,7 +259,7 @@ export default function HomeScreen() {
                   className="w-full justify-center gap-2 rounded-full bg-background text-sm font-semibold text-primary hover:bg-secondary/80"
                 >
                   <Plus className="size-4" />
-                  Aile Oluştur
+                  {t['home.createFamilyBtn']}
                 </Button>
               </div>
             </motion.div>
@@ -292,7 +283,7 @@ export default function HomeScreen() {
                     {family.name}
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    {family.members.length} üye
+                    {family.members.length} {t['home.members']}
                   </p>
                 </div>
                 <ChevronRight className="size-5 shrink-0 text-muted-foreground/50" />
@@ -312,7 +303,7 @@ export default function HomeScreen() {
                   <ShoppingCart className="size-4 text-primary" />
                 </div>
                 <span className="text-2xl font-bold text-foreground">{totalLists}</span>
-                <span className="text-xs text-muted-foreground">Liste</span>
+                <span className="text-xs text-muted-foreground">{t['home.lists']}</span>
               </motion.div>
 
               <motion.div
@@ -325,7 +316,7 @@ export default function HomeScreen() {
                 <span className="text-2xl font-bold text-foreground">
                   {totalPending}
                 </span>
-                <span className="text-xs text-muted-foreground">Bekleyen Ürün</span>
+                <span className="text-xs text-muted-foreground">{t['home.pendingItems']}</span>
               </motion.div>
             </motion.section>
           </>
@@ -337,11 +328,11 @@ export default function HomeScreen() {
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
                 <ListChecks className="size-4 text-primary" />
-                Son Listeler
+                {t['home.recentLists']}
               </h3>
               {lists.length > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  {lists.length} liste
+                  {lists.length} {t['home.list']}
                 </span>
               )}
             </div>
@@ -359,10 +350,10 @@ export default function HomeScreen() {
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <p className="text-sm font-medium text-muted-foreground">
-                    Henüz liste oluşturulmadı
+                    {t['home.noLists']}
                   </p>
                   <p className="text-xs text-muted-foreground/50">
-                    Ailenizle paylaşmak için bir liste oluşturun
+                    {t['home.noListsDesc']}
                   </p>
                 </div>
               </motion.div>
@@ -397,7 +388,7 @@ export default function HomeScreen() {
                         <span className="font-medium text-primary">
                           {completed}
                         </span>{' '}
-                        / {total} tamamlandı
+                        / {total} {t['home.completed']}
                       </p>
 
                       {/* Progress bar */}

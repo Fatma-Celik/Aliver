@@ -344,3 +344,54 @@ Stage Summary:
 - Theme-aware (light/dark) via CSS classes
 - Smooth spring animations for all interactions
 - FAB visibility improved (hidden on profile tab)
+
+---
+Task ID: 4-c
+Agent: i18n Agent
+Task: Add i18n translations to list-screen.tsx, family-screen.tsx, and profile-screen.tsx
+
+Work Log:
+- Added 17 new i18n keys to i18n.ts (tr/en/ar) for strings not previously covered:
+  - Family: error.nameRequired, error.codeRequired, codeCopied, copyFailed, error.leaveFailed, qrScanHint, joinedAt, time.* (7 relative time keys)
+  - List: itemsLoadFailed, editNamePlaceholder
+- list-screen.tsx: Full i18n from scratch — added useTranslation import and hook to both ListSelectionView and ItemsView
+  - Replaced 28 hardcoded Turkish strings with t[] calls
+  - UNITS Select now shows translated labels (unitLabels map) while keeping API values as-is
+  - All toast messages, dialog titles/descriptions, placeholders, empty states, badges, search text translated
+- family-screen.tsx: Updated remaining 13 hardcoded Turkish strings
+  - relativeTime() function now accepts t parameter for translated time strings
+  - Validation errors, copy actions, leave error, QR scan hint, member join time all translated
+- profile-screen.tsx: Already fully translated — verified no changes needed (only 'Türkçe' in LANGUAGE_OPTIONS remains, which is data not UI text)
+
+Stage Summary:
+- All 3 component files now have zero hardcoded Turkish UI strings
+- ESLint passes cleanly with no errors
+- Dev server compiles successfully (no type errors)
+- profile-screen.tsx was already done by a previous task
+
+---
+Task ID: 9
+Agent: Main Orchestrator
+Task: Redesign bottom navigation bar (clean modern style) + complete i18n system
+
+Work Log:
+- Completely rewrote bottom-nav.tsx with clean minimal design:
+  - Removed old pill indicator, shimmer line, and dot indicator
+  - New design: glass morphism container with subtle active background pill (var(--nav-active-bg))
+  - Simple color transitions (no complex motion values or spring animations)
+  - CSS variables for theme-aware colors (nav-container, nav-active-bg, nav-inactive)
+  - Clean icons + small labels, active = primary color + background pill
+- Updated globals.css: replaced old bottom-nav-* classes with .nav-container + CSS variables
+- Fixed i18n syntax: replaced t('key') function calls with t['key'] bracket notation in auth-screen, home-screen, list-screen (3 files, 37 occurrences)
+- Fixed SectionTitle uppercase bug: removed CSS 'uppercase' class to prevent locale-sensitive text-transform issues (NOTİFİCATİONS in Turkish locale)
+- Subagent completed i18n for list-screen.tsx, family-screen.tsx, profile-screen.tsx
+- Browser verified: Turkish, English, Arabic all work correctly
+- VLM rated new bottom nav 8/10 for visual quality
+
+Stage Summary:
+- Clean, minimal bottom nav with glass morphism
+- Full i18n: 120+ translation keys in 3 languages (TR/EN/AR)
+- All 7 components use translation system
+- Language switching verified in browser
+- Favicon updated to aliver-favicon.png
+- Logos copied to /public/ (dark, light, favicon, logo-light)

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "ALIVER - Aile Alışveriş Asistanınız",
   description: "Alıver - Herkes bilir, biri alır.",
   icons: {
-    icon: "/aliver-logo.png",
+    icon: "/aliver-favicon.png",
   },
 };
 
