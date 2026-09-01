@@ -197,9 +197,9 @@ export default function HomeScreen() {
             <Image
               src={theme === 'dark' ? '/aliver-icon-dark.png' : '/aliver-icon-light.png'}
               alt="ALIVER"
-              width={80}
-              height={80}
-              className="w-20 h-20 object-contain"
+              width={120}
+              height={120}
+              className="w-28 h-28 object-contain"
               priority
             />
           </motion.div>

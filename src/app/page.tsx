@@ -73,6 +73,27 @@ function AppContent() {
   }, [])
 
   useEffect(() => {
+    // OAuth callback'ten gelen token'ı yakala
+    const handleOAuthCallback = () => {
+      const hash = window.location.hash
+      if (!hash || !hash.startsWith('#token=')) return
+      try {
+        const hashParams = new URLSearchParams(hash.slice(1))
+        const tokenParam = hashParams.get('token')
+        const userParam = hashParams.get('user')
+        if (tokenParam && userParam) {
+          const user = JSON.parse(decodeURIComponent(userParam))
+          useAppStore.getState().setAuth(tokenParam, user)
+          window.history.replaceState(null, '', window.location.pathname)
+        }
+      } catch {
+        // Geçersiz callback verisi
+      }
+    }
+    handleOAuthCallback()
+  }, [])
+
+  useEffect(() => {
     if (!token) {
       setInitialCheck(false)
       return

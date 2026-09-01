@@ -127,13 +127,13 @@ export default function AuthScreen() {
               initial={{ opacity: 0, y: -10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5, type: 'spring', stiffness: 300, damping: 20 }}
-              className="w-48 h-auto"
+              className="w-64 h-auto"
             >
               <Image
                 src="/aliver-logo-light.png"
                 alt="ALIVER"
-                width={300}
-                height={100}
+                width={400}
+                height={130}
                 className="w-full h-auto"
                 priority
               />
@@ -288,9 +288,19 @@ export default function AuthScreen() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() =>
-                    toast.info(t['auth.googleHint'])
-                  }
+                  onClick={async () => {
+                    try {
+                      const res = await fetch('/api/auth/google')
+                      const data = await res.json()
+                      if (data.url) {
+                        window.location.href = data.url
+                      } else {
+                        toast.info(t['auth.googleHint'])
+                      }
+                    } catch {
+                      toast.info(t['auth.googleHint'])
+                    }
+                  }}
                   className="h-11 w-full rounded-full border-border bg-foreground text-background text-sm font-medium hover:opacity-90"
                 >
                   <Chrome className="size-4 mr-2" />

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyPassword, generateToken } from '@/lib/auth'
+import { isSupabaseConfigured, supabaseLogin } from '@/lib/supabase-auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +15,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // ── Supabase modu aktifse Supabase ile giriş yap ──
+    if (isSupabaseConfigured()) {
+      const result = await supabaseLogin(email, password)
+      if (result.error) {
+        return NextResponse.json({ error: result.error }, { status: 401 })
+      }
+      return NextResponse.json(result)
+    }
+
+    // ── Local mod (SQLite) ──
     const user = await db.user.findUnique({ where: { email } })
     if (!user) {
       return NextResponse.json(
@@ -31,7 +42,6 @@ export async function POST(request: NextRequest) {
     }
 
     const token = generateToken(user.id)
-
     const { password: _, ...safeUser } = user
 
     return NextResponse.json({ token, user: safeUser })
