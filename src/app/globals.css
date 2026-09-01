@@ -366,37 +366,7 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
-/* ============================================================ */
-/*  GLASS NAVIGATION BAR                                        */
-/* ============================================================ */
 
-.glass-nav {
-  position: relative;
-}
-
-.dark .glass-nav {
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(32px) saturate(1.8);
-  -webkit-backdrop-filter: blur(32px) saturate(1.8);
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.glass-nav {
-  background: rgba(248, 246, 243, 0.8);
-  backdrop-filter: blur(32px) saturate(1.5);
-  -webkit-backdrop-filter: blur(32px) saturate(1.5);
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.glass-nav::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(212, 137, 14, 0.2) 50%, transparent 100%);
-}
 
 /* ============================================================ */
 /*  THEME TRANSITION                                            */
@@ -406,7 +376,7 @@ html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body, .glass-card, .glass-input, .glass-nav, .hover-glow, .hover-border-glow {
+body, .glass-card, .glass-input, .hover-glow, .hover-border-glow, .fab-basket {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
@@ -444,9 +414,9 @@ input:-webkit-autofill:focus {
 
 .fab-basket {
   position: fixed;
-  bottom: 5rem;
+  bottom: 7.5rem;
   right: 1.25rem;
-  z-index: 40;
+  z-index: 60;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -455,18 +425,7 @@ input:-webkit-autofill:focus {
   justify-content: center;
   cursor: pointer;
   border: none;
-}
-
-.dark .fab-basket {
-  background: linear-gradient(145deg, #FCA311 0%, #E8920A 100%);
-  box-shadow: 0 6px 24px rgba(252, 163, 17, 0.35), 0 0 40px rgba(252, 163, 17, 0.1);
-}
-
-.fab-basket {
-  background: linear-gradient(145deg, #D4890E 0%, #FCA311 100%);
-  box-shadow: 0 6px 24px rgba(212, 137, 14, 0.3), 0 0 40px rgba(212, 137, 14, 0.08);
-}
-
-.fab-basket:active {
-  transform: scale(0.92);
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0;
 }

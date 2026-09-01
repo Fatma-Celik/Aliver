@@ -262,3 +262,49 @@ Stage Summary:
 - List edit (rename) functionality added with pencil icon + dialog
 - Turkish titleCase bug fixed (KullaniciCi → Kullanici)
 - All changes pass ESLint and browser verification
+
+---
+Task ID: 7
+Agent: full-stack-developer
+Task: Redesign bottom nav to floating pill, update FAB, add language system, new branding, text updates
+
+Work Log:
+- bottom-nav.tsx: Complete redesign to floating pill style with `fixed bottom-4 left-4 right-4` positioning
+  - Replaced full-width glass-nav bar with rounded-2xl floating pill (bg-card dark:bg-black)
+  - Added semicircular notch at top center using overflow-hidden + rounded-b-full div
+  - Removed text labels under icons — only icons visible now
+  - Active tab: white circle (bg-foreground dark:bg-white) that protrudes 14px above bar with gold icon
+  - Inactive tabs: 18px icons at 50% opacity (muted-foreground)
+  - Animated indicator moves between tab positions using framer-motion spring animation
+  - Safe area padding via env(safe-area-inset-bottom)
+- page.tsx FabWidget: Fixed behavior — sets first list as active when lists exist, navigates to list tab
+  - Added pulsing gold glow animation (framer-motion animate on boxShadow, 2.5s loop)
+  - Positioned above floating nav: bottom 7.5rem, z-index 60
+  - Updated main padding from pb-20 to pb-28 for floating nav clearance
+- auth-store.ts: Added `language: Language` field ('tr' | 'en' | 'ar', default 'tr') and `setLanguage` action
+  - Added `Language` type export
+  - Added language to partialize config for localStorage persistence
+- profile-screen.tsx: Replaced static 'Türkçe' text with shadcn Select dropdown
+  - Options: Türkçe, English, العربية
+  - Calls setLanguage from store on change
+  - Imported Select, SelectContent, SelectItem, SelectTrigger, SelectValue components
+- home-screen.tsx: New branding header section
+  - ALIVER logo image (/aliver-icon.png) centered, 80x80px, rounded-full with gold ring (ring-3 ring-primary/60)
+  - 'ALIVER' in text-3xl font-extrabold with platini-text-gradient class
+  - Slogan 'Herkes bilir, biri alır.' in italic muted-foreground text
+  - Welcome greeting and date moved below branding section
+  - Used next/image for logo optimization
+- auth-screen.tsx: Changed description from 'Aile Alışveriş Asistanınız' to 'Herkes bilir, biri alır.'
+- layout.tsx: Changed metadata description to 'Alıver - Herkes bilir, biri alır.'
+- globals.css: Removed .glass-nav styles (no longer used), updated .fab-basket styles
+  - FAB now transparent background (gradient applied inline in component)
+  - FAB repositioned to bottom 7.5rem with z-index 60
+  - Removed glass-nav from theme transition selector list
+
+Stage Summary:
+- Bottom nav redesigned as floating pill with animated active indicator and center notch
+- FAB positioned above nav with pulsing gold glow animation, smart list navigation
+- Language system added to store with Select dropdown in profile
+- New branding header on home screen with logo, title, and slogan
+- All text/branding updated to 'Herkes bilir, biri alır.' across auth, layout, home
+- Old glass-nav CSS removed, FAB CSS updated for new positioning

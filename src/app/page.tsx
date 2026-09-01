@@ -20,13 +20,17 @@ function ThemeSync() {
 }
 
 function FabWidget() {
-  const { setActiveTab, activeTab, activeList } = useAppStore()
+  const { setActiveTab, setActiveList, activeTab, family, lists } = useAppStore()
 
   const handleClick = () => {
+    if (lists.length > 0 && family) {
+      setActiveList(lists[0])
+    }
     setActiveTab('list')
   }
 
-  if (activeTab === 'list' && activeList) return null
+  // Hide when already on list tab with an active list
+  if (activeTab === 'list' && useAppStore.getState().activeList) return null
 
   return (
     <motion.button
@@ -39,7 +43,22 @@ function FabWidget() {
       transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.3 }}
       aria-label="Alışveriş Listesine Git"
     >
-      <ShoppingCart className="size-6 text-white" strokeWidth={2} />
+      <motion.div
+        animate={{
+          boxShadow: [
+            '0 6px 24px rgba(252,163,17,0.3), 0 0 20px rgba(252,163,17,0.15)',
+            '0 6px 28px rgba(252,163,17,0.45), 0 0 35px rgba(252,163,17,0.25)',
+            '0 6px 24px rgba(252,163,17,0.3), 0 0 20px rgba(252,163,17,0.15)',
+          ],
+        }}
+        transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+        className="w-14 h-14 rounded-full flex items-center justify-center"
+        style={{
+          background: 'linear-gradient(145deg, #FCA311 0%, #E8920A 100%)',
+        }}
+      >
+        <ShoppingCart className="size-6 text-white" strokeWidth={2} />
+      </motion.div>
     </motion.button>
   )
 }
@@ -102,7 +121,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-background">
       <ThemeSync />
-      <main className="pb-20">
+      <main className="pb-28">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
             <motion.div key="home" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }}>

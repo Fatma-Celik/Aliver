@@ -134,7 +134,7 @@ export default function AuthScreen() {
               transition={{ delay: 0.4, duration: 0.5 }}
               className="text-sm text-muted-foreground"
             >
-              Aile Alışveriş Asistanınız
+              Herkes bilir, biri alır.
             </motion.p>
           </CardHeader>
 

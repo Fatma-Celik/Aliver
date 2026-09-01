@@ -30,6 +30,13 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { toast } from 'sonner'
 import {
   Dialog,
@@ -50,7 +57,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useAppStore, type User as UserType } from '@/store/auth-store'
+import { useAppStore, type User as UserType, type Language } from '@/store/auth-store'
 
 /* ------------------------------------------------------------------ */
 /*  Animation helpers                                                  */
@@ -79,6 +86,12 @@ interface Stats {
   completed: number
 }
 
+const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
+  { value: 'tr', label: 'Türkçe' },
+  { value: 'en', label: 'English' },
+  { value: 'ar', label: 'العربية' },
+]
+
 function titleCase(str: string): string {
   return str
     .split(/\s+/)
@@ -101,6 +114,8 @@ export default function ProfileScreen() {
     setNotifications,
     updateUser,
     token,
+    language,
+    setLanguage,
   } = useAppStore()
 
   const [stats, setStats] = useState<Stats>({ members: 0, lists: 0, completed: 0 })
@@ -448,7 +463,7 @@ export default function ProfileScreen() {
       <motion.div variants={item}>
         <SectionTitle icon={<User className="w-4 h-4" />} title="Hesap" />
         <div className="glass-card rounded-2xl divide-y divide-border mt-2">
-          {/* Language */}
+          {/* Language Select */}
           <div className="flex items-center justify-between px-4 py-3.5">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -459,10 +474,21 @@ export default function ProfileScreen() {
                 <span className="text-xs text-muted-foreground">Uygulama dili</span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="text-sm">Türkçe</span>
-              <ChevronRight className="w-4 h-4" />
-            </div>
+            <Select
+              value={language}
+              onValueChange={(v) => setLanguage(v as Language)}
+            >
+              <SelectTrigger className="w-[120px] h-8 text-xs border-border bg-primary/5 focus:ring-primary/20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </motion.div>

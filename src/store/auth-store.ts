@@ -54,6 +54,8 @@ export interface NotificationSettings {
   familyActivity: boolean
 }
 
+export type Language = 'tr' | 'en' | 'ar'
+
 export interface AppState {
   token: string | null
   user: User | null
@@ -75,6 +77,8 @@ export interface AppState {
   toggleTheme: () => void
   notifications: NotificationSettings
   setNotifications: (settings: Partial<NotificationSettings>) => void
+  language: Language
+  setLanguage: (language: Language) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -106,6 +110,8 @@ export const useAppStore = create<AppState>()(
       },
       setNotifications: (settings) =>
         set((s) => ({ notifications: { ...s.notifications, ...settings } })),
+      language: 'tr' as Language,
+      setLanguage: (language) => set({ language }),
     }),
     {
       name: 'aliver-storage',
@@ -115,6 +121,7 @@ export const useAppStore = create<AppState>()(
         activeTab: state.activeTab,
         theme: state.theme,
         notifications: state.notifications,
+        language: state.language,
       }),
     }
   )

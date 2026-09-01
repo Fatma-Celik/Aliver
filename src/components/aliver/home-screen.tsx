@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import {
   ShoppingCart,
   Users,
@@ -182,12 +183,53 @@ export default function HomeScreen() {
         animate="visible"
         className="flex flex-col gap-6"
       >
+        {/* ─── Branding Header ─── */}
+        <motion.section variants={itemVariants} className="flex flex-col items-center gap-3 pt-2">
+          {/* Logo with gold ring */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
+            className="relative"
+          >
+            <div className="w-20 h-20 rounded-full ring-[3px] ring-primary/60 ring-offset-2 ring-offset-background overflow-hidden">
+              <Image
+                src="/aliver-icon.png"
+                alt="ALIVER"
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </motion.div>
+
+          {/* ALIVER title */}
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+            className="text-3xl font-extrabold tracking-tight platini-text-gradient"
+          >
+            ALIVER
+          </motion.h1>
+
+          {/* Slogan */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25, duration: 0.4 }}
+            className="text-sm text-muted-foreground italic"
+          >
+            Herkes bilir, biri alır.
+          </motion.p>
+        </motion.section>
+
         {/* ─── Welcome Section ─── */}
         <motion.section variants={itemVariants} className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-foreground/90">
+          <h2 className="text-lg font-semibold text-foreground/90">
             Merhaba,{' '}
             <span className="platini-text-gradient">{user?.name ?? 'Kullanıcı'}</span>
-          </h1>
+          </h2>
           <p className="text-sm text-muted-foreground">
             {formatTurkishDate(now)}
           </p>
@@ -213,9 +255,9 @@ export default function HomeScreen() {
                     <Users className="size-5 text-black" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-black">
+                    <h3 className="text-lg font-bold text-black">
                       Ailenizi Kurun
-                    </h2>
+                    </h3>
                     <p className="text-sm text-black/70">
                       Alışveriş listelerinizi ailenizle paylaşın
                     </p>
@@ -246,9 +288,9 @@ export default function HomeScreen() {
                   <Users className="size-6 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-base font-semibold text-foreground">
+                  <h3 className="truncate text-base font-semibold text-foreground">
                     {family.name}
-                  </h2>
+                  </h3>
                   <p className="text-sm text-muted-foreground">
                     {family.members.length} üye
                   </p>
