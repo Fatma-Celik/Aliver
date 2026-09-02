@@ -1,301 +1,146 @@
 <div align="center">
 
-<img src="public/aliver-logo.png" width="120" height="120" alt="ALIVER Logo" />
+<img width="850" height="400" alt="aliiver" src="https://github.com/user-attachments/assets/967538b4-905e-41e6-bd88-089172eff482" />
 
-# A L I V E R
+<br/>
 
-### Aile Alışveriş Asistanınız
+# 🛒 ALIVER
 
-**Ailenizle paylaşabileceğiniz akıllı, gerçek zamanlı alışveriş listesi uygulaması.**
+### Herkes bilir, biri alır.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase)](https://supabase.com/)
-[![Expo](https://img.shields.io/badge/Expo-Ready-000020?style=flat-square&logo=expo)](https://expo.dev/)
-[![License](https://img.shields.io/badge/License-MIT-FCA311?style=flat-square)](LICENSE)
+**Ailenizle paylaşabileceğiniz akıllı ve gerçek zamanlı alışveriş listesi uygulaması.**
 
----
+<br/>
 
-## 🎯 Neden ALIVER?
+[![Next.js](https://img.shields.io/badge/Next.js-16-14213D?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Expo](https://img.shields.io/badge/Expo-Ready-14213D?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![License](https://img.shields.io/badge/License-MIT-FCA311?style=for-the-badge)](LICENSE)
 
-Evinizdeki ihtiyaçları tek bir listede toplayın, ailenizdeki herkes anında görsün. 
-Biri alışverişi yapsın, diğeri uygulamadan takip etsin. **QR kod ile saniyeler içinde aile üyesi ekleyin.**
-
-```
-┌─────────────┐     QR Kod     ┌─────────────┐
-│   Anne      │ ────────────► │   Baba      │
-│  "Süt al"  │               │  ✓ Süt alındı│
-└──────┬──────┘               └─────────────┘
-       │
-       ▼
-┌─────────────┐
-│   Çocuk     │
-│  "Ekmek"    │
-└─────────────┘
-```
+</div>
 
 ---
 
-## ✨ Özellikler
+## 🧡 ALIVER Nedir?
+
+**ALIVER**, aile bireylerinin ortak alışveriş ihtiyaçlarını tek bir platform üzerinden yönetmesini sağlayan modern bir alışveriş listesi uygulamasıdır.
+
+> **Birinin aklına gelir, herkes görür.  
+> Biri ekler, biri alır.**
+
+ALIVER ile aile üyeleri:
+
+- 🛒 Ortak alışveriş listeleri oluşturabilir
+- 👨‍👩‍👧‍👦 Aile üyelerini kolayca davet edebilir
+- 📱 QR kod ile aileye katılabilir
+- ✅ Alınan ürünleri anında işaretleyebilir
+- 🔄 Liste değişikliklerini gerçek zamanlı takip edebilir
+- 📊 Alışveriş listesinin ilerleme durumunu görebilir
+
+Kısacası:
+
+**Aklında tutma, ALIVER'a bırak.**
+
+---
+
+## 🎨 ALIVER Tasarım Dili
+
+ALIVER'ın görsel kimliği; **lacivert, turuncu ve beyaz** renklerin modern ve sade bir kombinasyonu üzerine kuruludur.
+
+### ☀️ Açık Tema
+
+<div align="center">
+
+<img width="203" height="197" alt="Ekran görüntüsü 2026-09-01 122539" src="https://github.com/user-attachments/assets/3b8be8ff-c254-4a8d-93bd-8bbfc3f9a9d5" />
+
+
+
+<br/>
+
+**Temiz · Sade · Ferah**
+
+</div>
+
+### 🌙 Koyu Tema
+
+<div align="center">
+
+<img width="203" height="197" alt="yeni koyu" src="https://github.com/user-attachments/assets/87b2dfc1-63bf-4038-9acd-b814ce0826b3" />
+
+
+
+<br/>
+
+**Modern · Kontrastlı · Odaklı**
+
+</div>
+
+### 🎯 Logo
+
+<div align="center">
+
+<img  width="203" height="197" alt="ChatGPT Image 1 Eyl 2026 20_42_53" src="https://github.com/user-attachments/assets/90a160b8-d5d9-4530-9d75-bce7d7d5a9f6" />
+
+</div>
+
+ALIVER logosundaki:
+
+- 🏠 **Ev** → Aileyi ve ortak yaşamı
+- 🛒 **Sepet** → Alışverişi
+- ✓ **Onay işareti** → Tamamlanan ihtiyaçları
+- 🟠 **Turuncu** → Enerji ve aksiyonu
+- 🔵 **Lacivert** → Güven ve teknolojiyi
+
+temsil eder.
+
+---
+
+# ✨ Özellikler
 
 | Özellik | Açıklama |
-|---------|----------|
-| 🔐 **Auth Sistemi** | Kayıt / Giriş ile güvenli kullanıcı yönetimi |
-| 👨‍👩‍👧‍👦 **Aile Ağacı** | Aile oluşturun, QR kod ile üye ekleyin |
-| 📋 **Alışveriş Listeleri** | Birden fazla liste oluşturun, yönetin |
-| 🛒 **Ürün Takibi** | Ürün ekle, miktar belirle, birim seç (adet/kg/litre/paket) |
-| ✅ **Tamamlama** | Alınan ürünleri işaretle, herkes görsün |
-| 📊 **İlerleme** | Liste ilerleme çubuğu ile durum takibi |
-| 📱 **QR Davet** | QR kod okutarak saniyeler içinde aileye katıl |
-| 🌙 **Platini Tema** | Siyah & Altın lüks karanlık tema tasarımı |
-| 💫 **Animasyonlar** | Framer Motion ile akıcı geçişler |
+|:---:|---|
+| 🔐 | **Güvenli Auth Sistemi** — Kayıt ve giriş işlemleri |
+| 👨‍👩‍👧‍👦 | **Aile Yönetimi** — Aile oluşturma ve üye yönetimi |
+| 📱 | **QR Davet** — QR kod ile hızlı aile katılımı |
+| 📋 | **Alışveriş Listeleri** — Birden fazla liste oluşturma |
+| 🛒 | **Ürün Yönetimi** — Ürün, miktar ve birim belirleme |
+| ✅ | **Ürün Tamamlama** — Alınan ürünleri işaretleme |
+| 🔄 | **Gerçek Zamanlı Takip** — Aile üyeleri değişiklikleri anında görür |
+| 📊 | **İlerleme Takibi** — Listenin tamamlanma durumunu görüntüleme |
+| 🌙 | **Tema Desteği** — Açık ve koyu tema |
+| 💫 | **Akıcı Animasyonlar** — Modern ve kullanıcı dostu geçişler |
 
 ---
 
-## 📸 Ekran Görüntüleri
+# 💡 Nasıl Çalışır?
 
-<div align="center">
-  <table>
-    <tr>
-      <td><img src="screenshot-auth.png" width="280" alt="Auth" /></td>
-      <td><img src="screenshot-home2.png" width="280" alt="Home" /></td>
-      <td><img src="screenshot-family.png" width="280" alt="Family" /></td>
-    </tr>
-    <tr>
-      <td align="center">Giriş / Kayıt</td>
-      <td align="center">Ana Sayfa</td>
-      <td align="center">Aile Yönetimi</td>
-    </tr>
-    <tr>
-      <td><img src="screenshot-list.png" width="280" alt="List" /></td>
-      <td><img src="screenshot-profile.png" width="280" alt="Profile" /></td>
-      <td><img src="public/aliver-logo.png" width="280" alt="Logo" /></td>
-    </tr>
-    <tr>
-      <td align="center">Alışveriş Listesi</td>
-      <td align="center">Profil</td>
-      <td align="center">ALIVER Logo</td>
-    </tr>
-  </table>
-</div>
-
----
-
-## 🏗️ Mimari
-
-```
-aliver/
-├── prisma/
-│   └── schema.prisma          # Veritabanı modelleri
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx          # Root layout + tema
-│   │   ├── page.tsx            # Ana sayfa (SPA router)
-│   │   ├── globals.css         # Platini tema + glass efektleri
-│   │   └── api/
-│   │       ├── auth/           # Kayıt, Giriş, Token doğrulama
-│   │       ├── family/         # Aile CRUD, QR, Üye yönetimi
-│   │       └── lists/          # Liste & Ürün CRUD
-│   ├── components/
-│   │   ├── aliver/             # Uygulama bileşenleri
-│   │   │   ├── auth-screen.tsx
-│   │   │   ├── home-screen.tsx
-│   │   │   ├── family-screen.tsx
-│   │   │   ├── list-screen.tsx
-│   │   │   ├── profile-screen.tsx
-│   │   │   └── bottom-nav.tsx
-│   │   └── ui/                 # shadcn/ui bileşenleri
-│   ├── store/
-│   │   └── auth-store.ts       # Zustand state yönetimi
-│   └── lib/
-│       ├── auth.ts             # Auth yardımcıları
-│       ├── db.ts               # Prisma client
-│       └── utils.ts            # Genel yardımcılar
-├── supabase-schema.sql         # Supabase SQL şeması
-└── package.json
-```
-
----
-
-## 🗄️ Veritabanı Şeması
-
-```
-┌──────────┐     ┌──────────────┐     ┌───────────────┐
-│   User   │     │    Family    │     │ FamilyMember  │
-├──────────┤     ├──────────────┤     ├───────────────┤
-│ id       │◄────│ createdBy    │     │ id            │
-│ name     │     │ id           │◄────│ familyId      │
-│ email    │     │ name         │     │ userId        │──► User
-│ password │     │ inviteCode   │     │ role          │
-│ avatar   │     │ createdAt    │     │ joinedAt      │
-└────┬─────┘     └──────┬───────┘     └───────────────┘
-     │                  │
-     │                  │
-     ▼                  ▼
-┌──────────────┐  ┌───────────────┐
-│ ShoppingList │  │ ShoppingItem  │
-├──────────────┤  ├───────────────┤
-│ id           │  │ id            │
-│ name         │  │ name          │
-│ createdBy ───┼──│ addedBy ──────┼──► User
-│ familyId     │  │ listId ───────┼──► ShoppingList
-│ createdAt    │  │ quantity      │
-└──────────────┘  │ unit          │
-                  │ completed     │
-                  │ purchasedBy ──┼──► User
-                  │ purchasedAt   │
-                  └───────────────┘
-```
-
----
-
-## 🚀 Kurulum
-
-### Gereksinimler
-
-- **Node.js** 18+
-- **Bun** (önerilen) veya npm
-
-### 1. Projeyi Klonlayın
-
-```bash
-git clone https://github.com/KULLANICIADINIZ/aliver.git
-cd aliver
-```
-
-### 2. Bağımlılıkları Kurun
-
-```bash
-bun install
-```
-
-### 3. Supabase'i Ayarlayın
-
-1. [Supabase](https://supabase.com) hesabı oluşturun
-2. Yeni bir proje oluşturun
-3. **SQL Editor**'ü açın ve `supabase-schema.sql` dosyasını yapıştırıp çalıştırın
-4. **Project Settings > API**'den `SUPABASE_URL` ve `SUPABASE_ANON_KEY`'i alın
-
-### 4. Ortam Değişkenlerini Ayarlayın
-
-```bash
-cp .env.example .env
-```
-
-`.env` dosyasını düzenleyin:
-
-```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...
-```
-
-### 5. Çalıştırın
-
-```bash
-# Geliştirme
-bun run dev
-
-# Üretim
-bun run build
-bun start
-```
-
-Uygulama **http://localhost:3000** adresinde çalışacaktır.
-
----
-
-## 📱 Expo Mobil Uygulama & APK İndirme
-
-Detaylı kurulum, Google Auth ve APK build rehberi → **[EXPO_GUIDE.md](./EXPO_GUIDE.md)**
-
-| Yöntem | Süre | Açıklama |
-|--------|------|----------|
-| **EAS Build** | ~10 dk | Cloud build, en kolay, indirme linki verir |
-| **Lokal Build** | ~20 dk | Android Studio ile `app-debug.apk` üretir |
-| **Expo Go** | Anında | QR okut, geliştirme sırasında test et |
-
-```bash
-# Hızlı APK (EAS Build)
-cd aliver-mobile
-eas build --platform android --profile preview
-# ✅ İndirme linki çıkar → telefondan aç → APK yüklenir!
-```
-
----
-
-## 🎨 Tasarım Sistemi
-
-### Renk Paleti - Platini Tema
-
-| Renk | Hex | Kullanım |
-|------|-----|----------|
-| 🖤 **Siyah** | `#000000` | Ana arka plan |
-| ✨ **Altın** | `#FCA311` | Aksan, butonlar, vurgular |
-| 🔵 **Lacivert** | `#14213D` | Kart arka planları |
-| ⚫ **Koyu Lacivert** | `#0D1B2A` | İkincil yüzeyler |
-| ⚪ **Beyaz** | `#FFFFFF` | Ana metin |
-| 🔘 **Griden** | `#8899AA` | İkincil metin |
-| 🔴 **Kırmızı** | `#FF4444` | Hata, tehlike |
-
-### Glass Efektleri
-
-```css
-.glass-card {
-  background: rgba(20, 33, 61, 0.6);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(252, 163, 17, 0.08);
-}
-```
-
-### Teknoloji Yığını
-
-- **Framework**: Next.js 16 (App Router)
-- **Dil**: TypeScript 5
-- **Styling**: Tailwind CSS 4 + shadcn/ui
-- **Animasyon**: Framer Motion
-- **State**: Zustand (persist)
-- **Database**: Supabase (PostgreSQL)
-- **Font**: Outfit (Google Fonts)
-
----
-
-## 🔮 Gelecek Planları
-
-- [ ] 📱 [Expo mobil uygulama](./EXPO_GUIDE.md) & APK build
-- [ ] 🔔 Push bildirimler (Supabase Realtime)
-- [ ] 📷 QR kod okuyucu (kamera ile)
-- [ ] 🏷️ Ürün kategorileri
-- [ ] 📊 Harcama istatistikleri
-- [ ] 🌐 Çoklu dil desteği
-- [ ] 🎤 Sesli ürün ekleme
-- [ ] 🤖 AI ürün önerisi
-
----
-
-## 🤝 Katkıda Bulunun
-
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing`)
-3. Commit yapın (`git commit -m 'Add amazing feature'`)
-4. Push yapın (`git push origin feature/amazing`)
-5. Pull Request açın
-
----
-
-## 📄 Lisans
-
-MIT License © 2025 ALIVER
-
----
-
-<div align="center">
-  <p>
-    <strong style="color: #FCA311;">ALIVER</strong> — Ailenizle, Birlikte, İçin.
-  </p>
-  <p>
-    <sub>Built with ❤️ & Next.js</sub>
-  </p>
-</div>
+```text
+                    🏠 ALIVER
+                       │
+                       ▼
+              ┌──────────────────┐
+              │   AİLE OLUŞTUR   │
+              └────────┬─────────┘
+                       │
+                       ▼
+                📱 QR KOD PAYLAŞ
+                       │
+            ┌──────────┼──────────┐
+            ▼          ▼          ▼
+          👩 Anne    👨 Baba    👧 Çocuk
+            │          │          │
+            └──────────┼──────────┘
+                       ▼
+                🛒 ORTAK LİSTE
+                       │
+            ┌──────────┼──────────┐
+            ▼          ▼          ▼
+          🥛 Süt    🍞 Ekmek    🥚 Yumurta
+                       │
+                       ▼
+                 ✅ ALINDI!
+                       │
+                       ▼
+              🔄 HERKES GÖRÜR
