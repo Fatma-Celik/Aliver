@@ -515,11 +515,13 @@ export default function AuthScreen() {
                     onClick={async () => {
                       try {
                         const { error } = await supabase.auth.signInWithOAuth({
-                          provider: 'google',
-                          options: {
-                            redirectTo: `${window.location.origin}/auth/callback`
-                          }
-                        })
+                            provider: 'google',
+                            options: {
+                              redirectTo: (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform())
+                                ? 'aliver://auth/callback'
+                                : `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`
+                            }
+                          })
                         if (error) {
                           toast.error(error.message)
                         }
