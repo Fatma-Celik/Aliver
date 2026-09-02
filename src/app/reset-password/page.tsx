@@ -115,7 +115,7 @@ export default function ResetPasswordPage() {
       <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 w-full max-w-md">
         <Card className="glass-card shadow-2xl">
           <CardHeader className="flex flex-col items-center gap-2 pb-2 pt-6">
-            <Image src={(process.env.NEXT_PUBLIC_APP_URL || '') + '/aliver-logo-light.png'} alt="ALIVER" width={200} height={65} className="mb-4 h-auto w-48" priority />
+            <Image src="" alt="ALIVER" width={200} height={65} className="mb-4 h-auto w-48" priority />
             <h2 className="text-xl font-bold text-foreground">Yeni Şifre Belirle</h2>
             <p className="text-center text-sm text-muted-foreground">Hesabınız için yeni bir şifre girin.</p>
           </CardHeader>

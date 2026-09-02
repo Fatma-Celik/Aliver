@@ -282,7 +282,7 @@ export default function AuthScreen() {
               className="w-64 h-auto"
             >
               <Image
-                src={(process.env.NEXT_PUBLIC_APP_URL || '') + '/aliver-logo-light.png'}
+                src=""
                 alt="ALIVER"
                 width={400}
                 height={130}
