@@ -109,7 +109,7 @@ export default function HomeScreen() {
     setLoading(true)
     try {
       // Fetch family
-      const familyRes = await fetch('/api/family/my-family', {
+      const familyRes = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/my-family', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (familyRes.ok) {
@@ -120,7 +120,7 @@ export default function HomeScreen() {
       }
 
       // Fetch lists
-      const listsRes = await fetch('/api/lists', {
+      const listsRes = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (listsRes.ok) {
@@ -194,7 +194,7 @@ export default function HomeScreen() {
             transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
           >
             <Image
-              src="/aliver-icon-light.png"
+              src={(process.env.NEXT_PUBLIC_APP_URL || '') + '/aliver-icon-light.png'}
               alt="ALIVER"
               width={120}
               height={120}

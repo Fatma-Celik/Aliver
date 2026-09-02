@@ -100,7 +100,7 @@ function AppContent() {
     }
     const verifyToken = async () => {
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
         })
         if (!res.ok) {

@@ -78,7 +78,7 @@ export default function AuthScreen() {
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -120,7 +120,7 @@ export default function AuthScreen() {
       const body: Record<string, string> = { email, password }
       if (mode === 'register') body.name = name
 
-      const res = await fetch(endpoint, {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -282,7 +282,7 @@ export default function AuthScreen() {
               className="w-64 h-auto"
             >
               <Image
-                src="/aliver-logo-light.png"
+                src={(process.env.NEXT_PUBLIC_APP_URL || '') + '/aliver-logo-light.png'}
                 alt="ALIVER"
                 width={400}
                 height={130}

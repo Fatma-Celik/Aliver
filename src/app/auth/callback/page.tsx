@@ -24,7 +24,7 @@ export default function AuthCallbackPage() {
 
       // We have a Supabase session. Now we sync it with our backend to get the local custom token.
       try {
-        const res = await fetch('/api/auth/sync', {
+        const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ access_token: session.access_token }),

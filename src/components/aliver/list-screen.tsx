@@ -133,7 +133,7 @@ function ListSelectionView() {
     if (!token) return
     setLoading(true)
     try {
-      const res = await fetch('/api/lists', { headers: authHeaders(token) })
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists', { headers: authHeaders(token) })
       if (res.ok) {
         const data = await res.json()
         const mapped: ShoppingList[] = (data.lists ?? []).map(
@@ -171,7 +171,7 @@ function ListSelectionView() {
     if (!token || !newListName.trim()) return
     setCreating(true)
     try {
-      const res = await fetch('/api/lists', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({ name: newListName.trim() }),
@@ -196,7 +196,7 @@ function ListSelectionView() {
     if (!token) return
     setDeletingListId(listId)
     try {
-      const res = await fetch(`/api/lists/${listId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ''}/api/lists/${listId}`, {
         method: 'DELETE',
         headers: authHeaders(token),
       })
@@ -223,7 +223,7 @@ function ListSelectionView() {
     setCheckingAllListId(list.id)
     try {
       // Fetch all items for the list
-      const itemsRes = await fetch(`/api/lists/items?listId=${list.id}`, {
+      const itemsRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ''}/api/lists/items?listId=${list.id}`, {
         headers: authHeaders(token),
       })
       if (!itemsRes.ok) {
@@ -235,7 +235,7 @@ function ListSelectionView() {
 
       // Toggle each incomplete item
       for (const item of incompleteItems) {
-        await fetch('/api/lists/items', {
+        await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
           body: JSON.stringify({ itemId: item.id }),
@@ -266,7 +266,7 @@ function ListSelectionView() {
     if (!token || !editListId || !editListName.trim()) return
     setEditing(true)
     try {
-      const res = await fetch(`/api/lists/${editListId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || ''}/api/lists/${editListId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({ name: editListName.trim() }),
@@ -604,7 +604,7 @@ function ItemsView() {
     if (!token || !activeList || !itemName.trim()) return
     setAdding(true)
     try {
-      const res = await fetch('/api/lists/items', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({
@@ -635,7 +635,7 @@ function ItemsView() {
     if (!token) return
     setTogglingId(itemId)
     try {
-      const res = await fetch('/api/lists/items', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({ itemId }),
@@ -671,7 +671,7 @@ function ItemsView() {
     if (!token) return
     setDeletingId(itemId)
     try {
-      const res = await fetch('/api/lists/items', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({ itemId }),

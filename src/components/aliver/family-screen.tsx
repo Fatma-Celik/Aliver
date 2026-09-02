@@ -105,7 +105,7 @@ export default function FamilyScreen() {
     if (!token) return
     setLoading(true)
     try {
-      const res = await fetch('/api/family/my-family', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/my-family', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
@@ -129,7 +129,7 @@ export default function FamilyScreen() {
   const fetchQrData = useCallback(async () => {
     if (!token) return
     try {
-      const res = await fetch('/api/family/qr', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/qr', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
@@ -164,7 +164,7 @@ export default function FamilyScreen() {
     if (!token) return
     setActionLoading(true)
     try {
-      const res = await fetch('/api/family/create', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ export default function FamilyScreen() {
     if (!token) return
     setActionLoading(true)
     try {
-      const res = await fetch('/api/family/join', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export default function FamilyScreen() {
     if (!token) return
     setActionLoading(true)
     try {
-      const res = await fetch('/api/family/leave', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/leave', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -264,7 +264,7 @@ export default function FamilyScreen() {
     if (!inviteEmail || !family?.inviteCode) return
     setInviteLoading(true)
     try {
-      const res = await fetch('/api/family/invite', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/invite', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

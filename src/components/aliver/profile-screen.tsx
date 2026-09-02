@@ -145,7 +145,7 @@ export default function ProfileScreen() {
       const headers: Record<string, string> = {}
       if (t) headers['Authorization'] = `Bearer ${t}`
 
-      const [listsRes] = await Promise.all([fetch('/api/lists', { headers })])
+      const [listsRes] = await Promise.all([fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists', { headers })])
 
       if (listsRes.ok) {
         const data = await listsRes.json()
@@ -157,7 +157,7 @@ export default function ProfileScreen() {
         let memberCount = 1
         if (familyId) {
           try {
-            const famRes = await fetch('/api/family/my-family', { headers })
+            const famRes = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/family/my-family', { headers })
             if (famRes.ok) {
               const famData = await famRes.json()
               memberCount = famData.members?.length ?? famData.family?.members?.length ?? 1
@@ -201,7 +201,7 @@ export default function ProfileScreen() {
     if (!token) return
     setSaving(true)
     try {
-      const res = await fetch('/api/auth/profile', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ name: editName, email: editEmail }),
@@ -238,7 +238,7 @@ export default function ProfileScreen() {
     try {
       const formData = new FormData()
       formData.append('avatar', file)
-      const res = await fetch('/api/auth/avatar', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/avatar', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -262,7 +262,7 @@ export default function ProfileScreen() {
   const handleRemoveAvatar = async () => {
     if (!token) return
     try {
-      const res = await fetch('/api/auth/avatar', {
+      const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/avatar', {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       })
