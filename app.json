@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "805c1c0c-267f-47d4-9f00-5fc92853e430"
+      }
+    },
+    "owner": "fatmaceliks-team",
+    "slug": "fatma-celik",
+    "android": {
+      "package": "com.fatmacelik.aliver"
+    }
+  }
+}

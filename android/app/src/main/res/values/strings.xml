@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Aliver</string>
+    <string name="title_activity_main">Aliver</string>
+    <string name="package_name">com.fatmacelik.aliver</string>
+    <string name="custom_url_scheme">com.fatmacelik.aliver</string>
+</resources>
