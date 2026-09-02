@@ -14,6 +14,7 @@ import {
   Shield,
   Loader2,
   ScanLine,
+  Mail,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -77,7 +78,7 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
 }
 
@@ -96,6 +97,8 @@ export default function FamilyScreen() {
   const [copied, setCopied] = useState(false)
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteLoading, setInviteLoading] = useState(false)
 
   /* ---------- Fetch family data on mount ---------- */
   const fetchFamily = useCallback(async () => {
@@ -253,6 +256,33 @@ export default function FamilyScreen() {
       toast.error(t['profile.connectionError'])
     } finally {
       setActionLoading(false)
+    }
+  }
+
+  /* ---------- Send Invite Email ---------- */
+  const handleSendInvite = async () => {
+    if (!inviteEmail || !family?.inviteCode) return
+    setInviteLoading(true)
+    try {
+      const res = await fetch('/api/family/invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: inviteEmail,
+          inviteCode: family.inviteCode,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Davet gönderilemedi')
+      toast.success('Davet e-postası başarıyla gönderildi!')
+      setInviteEmail('')
+    } catch (err: any) {
+      toast.error(err.message)
+    } finally {
+      setInviteLoading(false)
     }
   }
 
@@ -456,6 +486,29 @@ export default function FamilyScreen() {
                   ) : (
                     <Copy className="size-4" />
                   )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Invite via Email */}
+            <div className="mt-4 flex w-full max-w-xs flex-col gap-3 border-t border-border/50 pt-5">
+              <Label className="text-center text-xs font-medium text-muted-foreground">E-posta ile Davet Gönder</Label>
+              <div className="flex w-full items-center gap-2">
+                <Input 
+                  placeholder="E-posta adresi" 
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendInvite()}
+                  className="h-10 text-sm glass-input"
+                />
+                <Button 
+                  disabled={inviteLoading || !inviteEmail} 
+                  onClick={handleSendInvite}
+                  className="size-10 shrink-0 rounded-xl bg-primary text-black hover:bg-primary/90"
+                  size="icon"
+                >
+                  {inviteLoading ? <Loader2 className="size-4 animate-spin" /> : <Mail className="size-4" />}
                 </Button>
               </div>
             </div>

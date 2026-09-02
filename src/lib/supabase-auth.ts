@@ -1,6 +1,7 @@
 import { createAdminClient, isSupabaseConfigured, supabase } from './supabase'
 import { db } from './db'
-import { generateToken } from './auth'
+import { generateToken, hashPassword } from './auth'
+import crypto from 'node:crypto'
 
 export type AuthUser = {
   id: string
@@ -33,7 +34,7 @@ export async function supabaseRegister(
     password,
     options: {
       data: { name },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/auth/email-confirmation`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/auth/callback`,
     },
   })
 
@@ -47,7 +48,7 @@ export async function supabaseRegister(
       id: data.user.id,
       name,
       email,
-      password: 'supabase',
+      password: hashPassword(crypto.randomUUID()),
     },
     update: { name },
   })
@@ -91,6 +92,27 @@ export async function supabaseLogin(email: string, password: string): Promise<Au
   }
   if (!data.user) return { error: 'Giriş başarısız' }
 
+  // Sync to local DB for invited users or users created elsewhere
+  try {
+    await db.user.upsert({
+      where: { email },
+      create: {
+        id: data.user.id,
+        name: data.user.user_metadata?.name ?? email.split('@')[0],
+        email,
+        password: hashPassword(crypto.randomUUID()),
+        avatar: data.user.user_metadata?.avatar ?? null,
+      },
+      update: {
+        name: data.user.user_metadata?.name ?? undefined,
+        avatar: data.user.user_metadata?.avatar ?? undefined,
+      }
+    })
+  } catch (syncError) {
+    console.error('Local DB sync error in supabaseLogin:', syncError)
+    // We don't fail the login if sync fails, but this helps debug
+  }
+
   const token = generateToken(data.user.id)
   const user: AuthUser = {
     id: data.user.id,
@@ -126,7 +148,7 @@ export async function supabaseEmailConfirmation(token_hash: string): Promise<Aut
       id: data.user.id,
       name: data.user.user_metadata?.name ?? 'Kullanıcı',
       email: data.user.email ?? '',
-      password: 'supabase',
+      password: hashPassword(crypto.randomUUID()),
     },
     update: { name: data.user.user_metadata?.name },
   })
@@ -151,7 +173,7 @@ export async function supabaseResetPassword(email: string) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/api/auth/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/reset-password`,
   })
 
   if (error) return { error: error.message }
@@ -180,9 +202,7 @@ export async function supabaseAuthCallback(code: string) {
   }
 
   const admin = createAdminClient()
-  const { data, error } = await admin.auth.exchangeCodeForSession({
-    auth_code: code,
-  })
+  const { data, error } = await admin.auth.exchangeCodeForSession(code)
 
   if (error) return { error: error.message }
   if (!data.user) return { error: 'Auth başarısız' }
@@ -198,7 +218,7 @@ export async function supabaseAuthCallback(code: string) {
         data.user.email?.split('@')[0] ??
         'Kullanıcı',
       email: data.user.email ?? '',
-      password: 'supabase',
+      password: hashPassword(crypto.randomUUID()),
       avatar: data.user.user_metadata?.avatar_url ?? null,
     },
     update: {

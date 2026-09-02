@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     // ── Supabase modu aktifse Supabase ile giriş yap ──
     if (isSupabaseConfigured()) {
       const result = await supabaseLogin(email, password)
-      if (result.error) {
+      if ('error' in result) {
         return NextResponse.json({ error: result.error }, { status: 401 })
       }
       if ('needsConfirmation' in result) {

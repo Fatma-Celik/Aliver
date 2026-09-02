@@ -32,7 +32,7 @@ export function getSupabaseClient(): SupabaseClient {
 /** Shorthand alias */
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_, prop) {
-    return (getSupabaseClient() as Record<string, unknown>)[prop as string]
+    return (getSupabaseClient() as unknown as Record<string, unknown>)[prop as string]
   },
 })
 

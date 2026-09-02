@@ -73,13 +73,13 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
 }
 
 const cardHover = {
   scale: 1.02,
-  transition: { type: 'spring', stiffness: 400, damping: 25 },
+  transition: { type: 'spring' as const, stiffness: 400, damping: 25 },
 }
 
 /* ------------------------------------------------------------------ */

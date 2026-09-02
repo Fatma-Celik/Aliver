@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // ── Supabase modu aktifse Supabase ile kayıt yap ──
     if (isSupabaseConfigured()) {
       const result = await supabaseRegister(name, email, password)
-      if (result.error) {
+      if ('error' in result) {
         return NextResponse.json({ error: result.error }, { status: 400 })
       }
       if ('needsConfirmation' in result) {
