@@ -282,7 +282,7 @@ export default function AuthScreen() {
               className="w-64 h-auto"
             >
               <Image
-                src=""
+                src="/aliver-logo-light.png"
                 alt="ALIVER"
                 width={400}
                 height={130}

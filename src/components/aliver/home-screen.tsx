@@ -194,7 +194,7 @@ export default function HomeScreen() {
             transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.05 }}
           >
             <Image
-              src=""
+              src="/aliver-icon-light.png"
               alt="ALIVER"
               width={120}
               height={120}

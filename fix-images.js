@@ -19,9 +19,16 @@ files.forEach(f => {
   let content = fs.readFileSync(f, 'utf8'); 
   let modified = false; 
   if (content.includes('NEXT_PUBLIC_APP_URL')) { 
-    content = content.replace(/src=\{\(process\.env\.NEXT_PUBLIC_APP_URL \|\| ''\) \+ '(\/[^']+)'\}/g, 'src=""'); 
-    content = content.replace(/src=\{\(process\.env\.NEXT_PUBLIC_APP_URL \|\| ""\) \+ "(\/[^"]+)"\}/g, 'src=""'); 
-    modified = true; 
+    const regex1 = /src=\{\(process\.env\.NEXT_PUBLIC_APP_URL \|\| ''\) \+ '(\/[^']+)'\}/g;
+    if (regex1.test(content)) {
+      content = content.replace(regex1, 'src=""'); 
+      modified = true; 
+    }
+    const regex2 = /src=\{\(process\.env\.NEXT_PUBLIC_APP_URL \|\| ""\) \+ "(\/[^"]+)"\}/g;
+    if (regex2.test(content)) {
+      content = content.replace(regex2, 'src=""'); 
+      modified = true; 
+    }
   } 
   if (modified) { 
     fs.writeFileSync(f, content); 
