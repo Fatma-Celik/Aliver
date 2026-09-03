@@ -563,7 +563,7 @@ function ItemsView() {
     setLoading(true)
     try {
       const res = await fetch(
-        `/api/lists/items?listId=${activeList.id}`,
+        (process.env.NEXT_PUBLIC_APP_URL || '') + `/api/lists/items?listId=${activeList.id}`,
         { headers: authHeaders(token) },
       )
       if (res.ok) {
