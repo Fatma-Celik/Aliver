@@ -103,10 +103,14 @@ function AppContent() {
         const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` },
         })
-        if (!res.ok) {
+        // Only logout on explicit 401 (invalid/expired token)
+        // Do NOT logout on network errors, 500s, etc.
+        if (res.status === 401) {
           useAppStore.getState().logout()
         }
       } catch {
+        // Network error (server down, offline, etc.) — keep the session alive
+        // User can still browse cached data
       } finally {
         setInitialCheck(false)
       }

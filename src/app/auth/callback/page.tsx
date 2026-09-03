@@ -1,45 +1,59 @@
-﻿'use client'
+'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { useAppStore } from '@/store/auth-store'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function AuthCallbackPage() {
   const router = useRouter()
+  const handled = useRef(false)
 
   useEffect(() => {
+    if (handled.current) return
+    handled.current = true
+
     const handleAuth = async () => {
-      // Supabase JS will automatically parse the hash (#access_token=...)
-      // and establish a session if it's an implicit or PKCE callback.
-      const { data: { session }, error } = await supabase.auth.getSession()
-      
-      if (error || !session) {
-        toast.error('Giriş yapılamadı.')
+      // 1) Hash'ten access_token'ı doğrudan parse et
+      const hash = window.location.hash
+      if (!hash) {
+        toast.error('Giriş bilgisi bulunamadı.')
         router.push('/')
         return
       }
 
-      // We have a Supabase session. Now we sync it with our backend to get the local custom token.
+      const params = new URLSearchParams(hash.substring(1))
+      const accessToken = params.get('access_token')
+
+      if (!accessToken) {
+        toast.error('Access token bulunamadı.')
+        router.push('/')
+        return
+      }
+
+      // 2) Token'ı backend'e gönder ve lokal JWT + user bilgisini al
       try {
-        const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ access_token: session.access_token }),
-        })
-        
+        const res = await fetch(
+          (process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/sync',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: accessToken }),
+          }
+        )
+
         const data = await res.json()
         if (res.ok && data.token && data.user) {
           useAppStore.getState().setAuth(data.token, data.user)
+          toast.success('Giriş başarılı!')
           router.push('/')
         } else {
-          toast.error(data.error || 'Senkronizasyon hatası')
+          toast.error(data.error || 'Giriş senkronizasyonu başarısız.')
           router.push('/')
         }
       } catch {
-        toast.error('Bağlantı hatası')
+        toast.error('Sunucuya bağlanılamadı.')
         router.push('/')
       }
     }
