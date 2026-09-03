@@ -602,6 +602,25 @@ function ItemsView() {
 
   const handleAddItem = async () => {
     if (!token || !activeList || !itemName.trim()) return
+    
+    // Optimistic Update
+    const tempId = 'temp-' + Date.now()
+    const tempItem: ShoppingItem = {
+      id: tempId,
+      name: itemName.trim(),
+      quantity: Number(itemQty) || 1,
+      unit: itemUnit,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      adder: { name: useAppStore.getState().user?.name || 'Siz' },
+    }
+    
+    setItems((prev) => [tempItem, ...prev])
+    setAddItemOpen(false)
+    setItemName('')
+    setItemQty('1')
+    setItemUnit('adet')
+    
     setAdding(true)
     try {
       const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
@@ -609,23 +628,21 @@ function ItemsView() {
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
         body: JSON.stringify({
           listId: activeList.id,
-          name: itemName.trim(),
-          quantity: Number(itemQty) || 1,
-          unit: itemUnit,
+          name: tempItem.name,
+          quantity: tempItem.quantity,
+          unit: tempItem.unit,
         }),
       })
       if (res.ok) {
-        toast.success(t['list.added'])
-        setItemName('')
-        setItemQty('1')
-        setItemUnit['adet']
-        setAddItemOpen(false)
-        fetchItems()
+        // toast.success(t['list.added']) // Too noisy for optimistic
+        fetchItems() // Sync real IDs
       } else {
         toast.error(t['list.addFailed'])
+        setItems((prev) => prev.filter((i) => i.id !== tempId)) // Revert
       }
     } catch {
       toast.error(t['profile.connectionError'])
+      setItems((prev) => prev.filter((i) => i.id !== tempId)) // Revert
     } finally {
       setAdding(false)
     }
@@ -634,6 +651,16 @@ function ItemsView() {
   const handleToggle = async (itemId: string) => {
     if (!token) return
     setTogglingId(itemId)
+
+    // Optimistic Update
+    const originalItems = [...items]
+    const itemToToggle = items.find((i) => i.id === itemId)
+    if (!itemToToggle) return
+
+    setItems((prev) =>
+      prev.map((item) => (item.id === itemId ? { ...item, completed: !item.completed } : item)),
+    )
+
     try {
       const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
         method: 'PATCH',
@@ -658,10 +685,12 @@ function ItemsView() {
           }),
         )
       } else {
-        toast.error(t['list.toggleFailed'])
+        toast.error(t['list.updateFailed'])
+        setItems(originalItems) // Revert
       }
     } catch {
       toast.error(t['profile.connectionError'])
+      setItems(originalItems) // Revert
     } finally {
       setTogglingId(null)
     }
@@ -670,6 +699,12 @@ function ItemsView() {
   const handleDelete = async (itemId: string) => {
     if (!token) return
     setDeletingId(itemId)
+
+    // Optimistic Update
+    const originalItems = [...items]
+    const deletedItem = items.find((i) => i.id === itemId)
+    setItems((prev) => prev.filter((item) => item.id !== itemId))
+
     try {
       const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/lists/items', {
         method: 'DELETE',
@@ -677,18 +712,16 @@ function ItemsView() {
         body: JSON.stringify({ itemId }),
       })
       if (res.ok) {
-        toast.success(t['list.deleted'])
-        setItems((prev) => prev.filter((item) => item.id !== itemId))
+        // toast.success(t['list.deleted']) // Too noisy
         // Update list counts in the store
-        const deletedItem = items.find((i) => i.id === itemId)
         setLists(
           lists.map((l) => {
             if (l.id === activeList?.id) {
               return {
                 ...l,
                 _count: {
-                  items: (l._count?.items ?? 1) - 1,
-                  completed: (l._count?.completed ?? 0) - (deletedItem?.completed ? 1 : 0),
+                  items: Math.max(0, (l._count?.items ?? 1) - 1),
+                  completed: Math.max(0, (l._count?.completed ?? 0) - (deletedItem?.completed ? 1 : 0)),
                 },
               }
             }
@@ -697,9 +730,11 @@ function ItemsView() {
         )
       } else {
         toast.error(t['list.deleteFailed'])
+        setItems(originalItems) // Revert
       }
     } catch {
       toast.error(t['profile.connectionError'])
+      setItems(originalItems) // Revert
     } finally {
       setDeletingId(null)
     }
