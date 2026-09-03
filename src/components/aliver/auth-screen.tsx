@@ -46,12 +46,25 @@ export default function AuthScreen() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState('')
   const [confirmationEmail, setConfirmationEmail] = useState('')
   const [resetSent, setResetSent] = useState(false)
 
   const { t } = useTranslation()
   const setAuth = useAppStore((s) => s.setAuth)
+
+  const translateError = (errStr: string | null | undefined): string => {
+    if (!errStr) return t['auth.error.generic'] || 'Bir hata oluştu.'
+    const lower = errStr.toLowerCase()
+    if (lower.includes('invalid json') || lower.includes('unexpected token')) return 'Sunucu şu anda meşgul veya ulaşılamıyor. Lütfen tekrar deneyin.'
+    if (lower.includes('failed to fetch')) return 'Sunucuya ulaşılamıyor. İnternet bağlantınızı kontrol edin.'
+    if (lower.includes('already registered')) return 'Bu e-posta adresi zaten sisteme kayıtlı.'
+    if (lower.includes('invalid login credentials')) return 'E-posta adresi veya şifre hatalı.'
+    if (lower.includes('too many requests') || lower.includes('rate limit')) return 'Çok fazla deneme yaptınız. Lütfen biraz bekleyip tekrar deneyin.'
+    if (lower.includes('password must be') || lower.includes('password should be')) return 'Şifreniz en az 6 karakter olmalıdır.'
+    return errStr
+  }
 
   const switchMode = (to: AuthMode) => {
     setDirection(to === 'login' ? -1 : 1)
@@ -85,11 +98,11 @@ export default function AuthScreen() {
       })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
-        throw new Error(data?.error || 'Bir hata oluştu.')
+        throw new Error(data?.error || `HTTP ${res.status}`)
       }
       setResetSent(true)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu.')
+    } catch (err: any) {
+      setError(translateError(err.message))
     } finally {
       setLoading(false)
     }
@@ -128,7 +141,7 @@ export default function AuthScreen() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => null)
-        throw new Error(data?.error || t['auth.error.generic'])
+        throw new Error(data?.error || `HTTP ${res.status}`)
       }
 
       const data = await res.json()
@@ -141,8 +154,8 @@ export default function AuthScreen() {
       }
 
       setAuth(data.token, data.user as User)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t['auth.error.generic'])
+    } catch (err: any) {
+      setError(translateError(err.message))
     } finally {
       setLoading(false)
     }
@@ -506,35 +519,41 @@ export default function AuthScreen() {
                     <div className="h-px flex-1 bg-border" />
                   </div>
 
-                  {/* Google login button
-                      Light: beyaz zemin + siyah yazı
-                      Dark: koyu/gri zemin + turuncu yazı & ikon */}
+                  {/* Google login button */}
                   <Button
                     type="button"
                     variant="outline"
+                    disabled={googleLoading}
                     onClick={async () => {
                       try {
+                        setGoogleLoading(true)
                         const { error } = await supabase.auth.signInWithOAuth({
-                            provider: 'google',
-                            options: {
-                              redirectTo: (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform())
-                                ? 'aliver://auth/callback'
-                                : `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`
-                            }
-                          })
+                          provider: 'google',
+                          options: {
+                            redirectTo: (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform())
+                              ? 'aliver://auth/callback'
+                              : `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`
+                          }
+                        })
                         if (error) {
-                          toast.error(error.message)
+                          toast.error(translateError(error.message))
+                          setGoogleLoading(false)
                         }
                       } catch (err: any) {
-                        toast.error(err.message || t['auth.googleHint'])
+                        toast.error(translateError(err.message) || t['auth.googleHint'])
+                        setGoogleLoading(false)
                       }
                     }}
                     className="h-11 w-full rounded-full text-sm font-medium transition-all
                       border-border bg-white text-black hover:bg-white/90
                       dark:bg-white/10 dark:border-white/10 dark:text-[#FCA311] dark:hover:bg-white/15 [&_svg]:dark:text-[#FCA311]"
                   >
-                    <Chrome className="size-4 mr-2" />
-                    {t['auth.googleLogin']}
+                    {googleLoading ? (
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                    ) : (
+                      <Chrome className="size-4 mr-2" />
+                    )}
+                    {googleLoading ? 'Giriş Yapılıyor...' : t['auth.googleLogin']}
                   </Button>
                 </motion.form>
               )}
