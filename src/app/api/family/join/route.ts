@@ -54,6 +54,27 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // -- Push Notification --
+    try {
+      const familyMembers = await db.user.findMany({
+        where: {
+          families: { some: { familyId: family.id } },
+          id: { not: user.id },
+          fcmToken: { not: null },
+        },
+        select: { fcmToken: true },
+      })
+
+      const tokens = familyMembers.map(m => m.fcmToken).filter(Boolean) as string[]
+      if (tokens.length > 0) {
+        const { sendPushNotification } = await import('@/lib/firebase-admin')
+        const bodyText = `${user.name || 'Biri'} ailene katıldı! 🎉`
+        await sendPushNotification(tokens, 'Yeni Aile Üyesi', bodyText)
+      }
+    } catch (e) {
+      console.error('Failed to send push notification', e)
+    }
+
     // Return family with members
     const familyWithMembers = await db.family.findUnique({
       where: { id: family.id },
