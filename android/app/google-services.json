@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341736288189",
+    "project_id": "aliver-71672",
+    "storage_bucket": "aliver-71672.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341736288189:android:4088adc635c6c4bbd7ecd4",
+        "android_client_info": {
+          "package_name": "com.aliver.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDULTz4BHme0zuP3POVV_FNnjB9ejYYp9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
