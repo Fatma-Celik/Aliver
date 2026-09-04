@@ -15,9 +15,13 @@ function initializeFirebase() {
       serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
     } else {
       // Then try local file (for development or Render secret file)
-      const filePath = path.join(process.cwd(), 'firebase-admin.json')
-      if (fs.existsSync(filePath)) {
-        serviceAccount = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+      const localPath = path.join(process.cwd(), 'firebase-admin.json')
+      const renderSecretPath = '/etc/secrets/firebase-admin.json'
+      
+      if (fs.existsSync(localPath)) {
+        serviceAccount = JSON.parse(fs.readFileSync(localPath, 'utf8'))
+      } else if (fs.existsSync(renderSecretPath)) {
+        serviceAccount = JSON.parse(fs.readFileSync(renderSecretPath, 'utf8'))
       }
     }
 
