@@ -3,6 +3,7 @@ import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import DeepLinkListener from '@/components/aliver/deep-link-listener'
+import PushNotificationListener from '@/components/aliver/push-notification-listener'
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -44,6 +45,7 @@ export default function RootLayout({
         className={`${outfit.variable} ${mono.variable} antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <DeepLinkListener />
+        <PushNotificationListener />
         {children}
         <Toaster
           position="top-center"
