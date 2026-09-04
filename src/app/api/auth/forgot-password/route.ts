@@ -1,11 +1,11 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { supabaseResetPassword } from '@/lib/supabase-auth'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email } = body
+    const { email, redirectTo } = body
 
     if (!email) {
       return NextResponse.json({ error: 'E-posta adresi gerekli' }, { status: 400 })
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const result = await supabaseResetPassword(email)
+    const result = await supabaseResetPassword(email, redirectTo)
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 400 })
     }

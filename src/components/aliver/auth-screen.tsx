@@ -90,11 +90,16 @@ export default function AuthScreen() {
       return
     }
     setLoading(true)
-    try {
+      try {
+      const isNative = typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform()
+      const redirectTo = isNative
+        ? 'aliver://reset-password'
+        : `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/reset-password`
+
       const res = await fetch((process.env.NEXT_PUBLIC_APP_URL || '') + '/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, redirectTo }),
       })
       const data = await res.json().catch(() => null)
       if (!res.ok) {

@@ -167,13 +167,13 @@ export async function supabaseEmailConfirmation(token_hash: string): Promise<Aut
 /**
  * Şifre sıfırlama e-postası gönder
  */
-export async function supabaseResetPassword(email: string) {
+export async function supabaseResetPassword(email: string, redirectToUrl?: string) {
   if (!isSupabaseConfigured()) {
     return { error: 'Supabase bağlantısı henüz ayarlanmadı' }
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/reset-password`,
+    redirectTo: redirectToUrl || `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/reset-password`,
   })
 
   if (error) return { error: error.message }

@@ -72,8 +72,13 @@ export default function DeepLinkListener() {
             // Other deep links — navigate normally
             const parsed = new URL(url)
             if (parsed.protocol === 'aliver:') {
-              const route =
-                '/' + parsed.host + parsed.pathname + parsed.search
+              let route = '/' + parsed.host
+              if (parsed.pathname && parsed.pathname !== '/') {
+                route += parsed.pathname
+              }
+              if (parsed.search) route += parsed.search
+              if (parsed.hash) route += parsed.hash
+              
               router.push(route)
             }
           } catch (e) {
