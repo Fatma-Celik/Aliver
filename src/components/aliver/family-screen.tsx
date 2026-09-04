@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
+import { Scanner } from '@yudiel/react-qr-scanner'
 import {
   Users,
   UserPlus,
@@ -93,6 +94,7 @@ export default function FamilyScreen() {
   // Form states
   const [createName, setCreateName] = useState('')
   const [joinCode, setJoinCode] = useState('')
+  const [scannerOpen, setScannerOpen] = useState(false)
   const [qrData, setQrData] = useState<{ inviteCode: string; familyName: string; url: string } | null>(null)
   const [copied, setCopied] = useState(false)
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
@@ -402,13 +404,54 @@ export default function FamilyScreen() {
                 {t['family.joinBtn']}
               </Button>
 
-              <p className="flex items-center gap-1.5 text-center text-xs text-muted-foreground/50">
-                <ScanLine className="size-3 shrink-0" />
-                {t['family.qrScanHint']}
-              </p>
+              <Button
+                onClick={() => setScannerOpen(true)}
+                variant="outline"
+                className="w-full rounded-full border-dashed border-primary/40 bg-transparent text-primary hover:bg-primary/5"
+              >
+                <ScanLine className="size-4" />
+                Kamera ile QR Tara
+              </Button>
             </motion.div>
           </div>
         </motion.div>
+
+        {/* QR Scanner Dialog */}
+        <Dialog open={scannerOpen} onOpenChange={setScannerOpen}>
+          <DialogContent className="max-w-sm rounded-2xl border-border bg-background p-6 sm:rounded-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-lg font-bold text-foreground">
+                <ScanLine className="size-5 text-primary" />
+                QR Kod Tarayıcı
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                Kameranızı davet QR koduna doğru tutun.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="overflow-hidden rounded-xl bg-black">
+              {scannerOpen && (
+                <Scanner
+                  onResult={(text) => {
+                    setScannerOpen(false)
+                    // URL ise (örn: aliver://join/KOD) kodu çıkar
+                    const code = text.includes('join/') ? text.split('join/')[1] : text
+                    setJoinCode(code.toUpperCase())
+                  }}
+                  onError={(error) => console.log(error?.message)}
+                />
+              )}
+            </div>
+            <DialogFooter className="pt-2">
+              <Button
+                variant="ghost"
+                onClick={() => setScannerOpen(false)}
+                className="w-full rounded-xl"
+              >
+                İptal
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </main>
     )
   }
