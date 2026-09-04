@@ -116,26 +116,29 @@ function AppContent() {
     verifyToken()
   }, [token])
 
-  if (!mounted || initialCheck) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <h1 className="text-5xl font-bold platini-text-gradient mb-4">
-            ALIVER
-          </h1>
+    if (!mounted || initialCheck) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-background">
           <motion.div
-            className="w-8 h-8 rounded-full platini-gradient mx-auto"
-            animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 1.2 }}
-          />
-        </motion.div>
-      </div>
-    )
-  }
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center justify-center"
+          >
+            <img
+              src="/aliver-logo-light.png"
+              alt="ALIVER"
+              className="mb-6 h-auto w-48 drop-shadow-2xl"
+            />
+            <motion.div
+              className="size-8 rounded-full"
+              style={{ background: 'linear-gradient(135deg, #FCA311 0%, #E8920A 50%, #D48000 100%)' }}
+              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 1.2 }}
+            />
+          </motion.div>
+        </div>
+      )
+    }
 
   if (!token || !user) {
     return <><ThemeSync /><AuthScreen /></>
