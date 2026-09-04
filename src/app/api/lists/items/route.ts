@@ -116,6 +116,29 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // -- Push Notification --
+    try {
+      // Find other family members with fcmTokens
+      const familyMembers = await db.user.findMany({
+        where: {
+          families: { some: { familyId: membership.familyId } },
+          id: { not: user.id }, // Don't notify the person who added it
+          fcmToken: { not: null },
+        },
+        select: { fcmToken: true },
+      })
+
+      const tokens = familyMembers.map(m => m.fcmToken).filter(Boolean) as string[]
+      
+      if (tokens.length > 0) {
+        const { sendPushNotification } = await import('@/lib/firebase-admin')
+        const bodyText = `${user.name || 'Biri'} ${list.name} listesine ${item.quantity} ${item.unit} ${item.name} ekledi.`
+        await sendPushNotification(tokens, 'Yeni Ürün Eklendi! 🛒', bodyText, { listId })
+      }
+    } catch (e) {
+      console.error('Failed to send push notification', e)
+    }
+
     return NextResponse.json({ item }, { status: 201 })
   } catch (error) {
     console.error('Items POST error:', error)
@@ -172,6 +195,28 @@ export async function PATCH(request: NextRequest) {
         purchasedAt: newCompleted ? new Date() : null,
       },
     })
+
+    if (newCompleted) {
+      try {
+        const familyMembers = await db.user.findMany({
+          where: {
+            families: { some: { familyId: membership.familyId } },
+            id: { not: user.id },
+            fcmToken: { not: null },
+          },
+          select: { fcmToken: true },
+        })
+
+        const tokens = familyMembers.map(m => m.fcmToken).filter(Boolean) as string[]
+        if (tokens.length > 0) {
+          const { sendPushNotification } = await import('@/lib/firebase-admin')
+          const bodyText = `${user.name || 'Biri'} ${item.name} aldı.`
+          await sendPushNotification(tokens, 'Ürün Alındı ✅', bodyText, { listId: existingItem.listId })
+        }
+      } catch (e) {
+        console.error('Failed to send push notification', e)
+      }
+    }
 
     return NextResponse.json({ item })
   } catch (error) {
